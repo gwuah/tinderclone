@@ -10,7 +10,6 @@ func main() {
 	r := gin.Default()
 
 	config := cors.DefaultConfig()
-	// config.AllowOrigins = []string{"https://deeznuts.cum"}
 	config.AllowCredentials = true
 
 	r.GET("/healthcheck", handlers.HealthGet())
