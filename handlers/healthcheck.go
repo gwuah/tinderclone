@@ -12,3 +12,4 @@ func HealthGet() gin.HandlerFunc {
 	}
 
 }
+
