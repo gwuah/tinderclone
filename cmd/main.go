@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/gwuah/tinderclone/cmd/handlers"
-	"github.com/gwuah/tinderclone/core/database/postgres"
+	"github.com/gwuah/tinderclone/handlers"
+	"github.com/gwuah/tinderclone/core/postgres"
 )
 
 func main() {

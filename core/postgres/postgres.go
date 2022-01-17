@@ -3,7 +3,7 @@ package postgres
 import (
 	"fmt"
 	"os"
-	"github.com/gwuah/tinderclone/core/database/models"
+	"github.com/gwuah/tinderclone/core/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
