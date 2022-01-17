@@ -32,9 +32,6 @@ func Init() *gorm.DB {
 		panic(err)
 	}
 
-	DB := db
-
-	return DB
-
+	return db
 }
 
