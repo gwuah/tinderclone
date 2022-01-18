@@ -1,21 +1,31 @@
 package main
 
 import (
-	"github.com/gin-contrib/cors"
+	"fmt"
+	"log"
+	"os"
+
 	"github.com/gin-gonic/gin"
-	"github.com/gwuah/tinderclone/core/postgres"
-	"github.com/gwuah/tinderclone/handlers"
+	"github.com/gwuah/tinderclone/internal/core/config"
+	"github.com/gwuah/tinderclone/internal/core/postgres"
+	"github.com/gwuah/tinderclone/internal/handlers"
+	"github.com/gwuah/tinderclone/internal/middlewares"
 )
 
 func main() {
-	postgres.Init()
+
+	err := config.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	_, err = postgres.Init()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	r := gin.Default()
-
-	config := cors.DefaultConfig()
-	config.AllowCredentials = true
-
+	r.Use(middlewares.Cors())
 	r.GET("/healthcheck", handlers.HealthGet)
-	r.Use(cors.New(config))
-	r.Run(":8000")
+	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 }
