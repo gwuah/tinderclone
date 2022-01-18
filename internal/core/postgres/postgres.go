@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func constructDatabaseURI() string {
+func ConstructDatabaseURI() string {
 	dburl := os.Getenv("DATABASE_URL")
 	if dburl != "" {
 		return dburl
@@ -26,7 +26,7 @@ func constructDatabaseURI() string {
 
 func Init() (*gorm.DB, error) {
 
-	databaseUrl := constructDatabaseURI()
+	databaseUrl := ConstructDatabaseURI()
 
 	db, err := gorm.Open(postgres.Open(databaseUrl), &gorm.Config{})
 
