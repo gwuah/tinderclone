@@ -2,4 +2,6 @@
 Backend service for tinder clone
 
 # How to run
-PORT=8000 go run cmd/main.go
+- Clone `.env.local` into a `.env` file
+- Replace the variables accordingly to match your system
+- Run `go run cmd/main.go` in your terminal
