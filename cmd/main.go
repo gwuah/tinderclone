@@ -1,6 +1,9 @@
 package main
 
 import (
+	"fmt"
+	"os"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/handlers"
 	"github.com/gwuah/tinderclone/internal/middlewares"
@@ -11,5 +14,5 @@ func main() {
 	r := gin.Default()
 	r.Use(middlewares.Cors())
 	r.GET("/healthcheck", handlers.HealthGet)
-	r.Run(":8000")
+	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 }
