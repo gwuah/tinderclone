@@ -9,28 +9,36 @@ import (
 	"gorm.io/gorm"
 )
 
-func Init() *gorm.DB {
+func constructDatabaseURI() string {
+	dburl := os.Getenv("DATABASE_URL")
+	if dburl != "" {
+		return dburl
+	}
+
 	USER := os.Getenv("DB_USER")
 	PASSWORD := os.Getenv("DB_PASS")
 	HOST := os.Getenv("DB_HOST")
 	DBNAME := os.Getenv("DB_NAME")
 	PORT := os.Getenv("DB_PORT")
 	SSLMODE := os.Getenv("SSLMODE")
+	return fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=%s", USER, PASSWORD, HOST, PORT, DBNAME, SSLMODE)
+}
 
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
-		HOST, PORT, USER, PASSWORD, DBNAME, SSLMODE)
+func Init() (*gorm.DB, error) {
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	databaseUrl := constructDatabaseURI()
+
+	db, err := gorm.Open(postgres.Open(databaseUrl), &gorm.Config{})
 
 	if err != nil {
-		fmt.Println(err)
+		return nil, err
 	}
 
 	err = db.AutoMigrate(&models.User{})
 
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return db
+	return db, nil
 }
