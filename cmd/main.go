@@ -1,21 +1,15 @@
 package main
 
 import (
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/gwuah/tinderclone/core/postgres"
-	"github.com/gwuah/tinderclone/handlers"
+	"github.com/gwuah/tinderclone/internal/handlers"
+	"github.com/gwuah/tinderclone/internal/middlewares"
 )
 
 func main() {
-	postgres.Init()
-
+	// postgres.Init()
 	r := gin.Default()
-
-	config := cors.DefaultConfig()
-	config.AllowCredentials = true
-
+	r.Use(middlewares.Cors())
 	r.GET("/healthcheck", handlers.HealthGet)
-	r.Use(cors.New(config))
 	r.Run(":8000")
 }
