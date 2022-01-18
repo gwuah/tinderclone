@@ -17,5 +17,5 @@ func main() {
 
 	r.GET("/healthcheck", handlers.HealthGet)
 	r.Use(cors.New(config))
-	r.Run(":6969")
+	r.Run(":8000")
 }
