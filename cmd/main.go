@@ -26,6 +26,7 @@ func main() {
 
 	r := gin.Default()
 	r.Use(middlewares.Cors())
+	r.GET("/", handlers.HealthGet)
 	r.GET("/healthcheck", handlers.HealthGet)
 	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 }
