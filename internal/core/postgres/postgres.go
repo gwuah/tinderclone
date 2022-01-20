@@ -29,13 +29,11 @@ func Init() (*gorm.DB, error) {
 	databaseUrl := ConstructDatabaseURI()
 
 	db, err := gorm.Open(postgres.Open(databaseUrl), &gorm.Config{})
-
 	if err != nil {
 		return nil, err
 	}
 
 	err = db.AutoMigrate(&models.User{})
-
 	if err != nil {
 		return nil, err
 	}
