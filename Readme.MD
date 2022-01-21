@@ -1,26 +1,43 @@
-# Tinderclone API
-Backend service for tinder clone
+## 1. How to run
 
-# How to run
 - Clone `.env.local` into a `.env` file
 - Copy the migration in `internal/core/migration/que.sql` and run it on your db. (We can find a better way later)
 - Replace the variables accordingly to match your system
 - Run `go run cmd/main.go` in your terminal
 
-# API Endpoints
+## 2. API Endpoints
+
+### 2.1 Health check
+
+**Request**
 
 `GET /healthCheck`
-+ returns a `StatusOk(200)` if the server is up and running.
+
+**Response**
+
++ returns a `StatusOk(200)` with an `ok` response if the server is up and running.
+
+### 2.2 Create User Account
+
+**Sample Request**
 
 `POST /createAccount`
-+ returns data in this format if a `phonenumber` post request was succesful.
-```
-{   
-    "message": "phone number succesfully added",
-    "data": 
-        {
-        "id":     id,
-        "digits": digits 
-        }
-}
-```
+
+`Content-Type`: application/json
+
+`JSON body:` 
+
+    {
+    "phone_number" : "1234567"
+    }
+
+
+**Sample Response**
+
+    {
+    "data": {
+        "id": 2,
+        "phone_number": "1234567"
+    },
+    "message": "phone number succesfully added"
+    }

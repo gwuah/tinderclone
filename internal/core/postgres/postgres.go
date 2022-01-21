@@ -41,9 +41,3 @@ func Init() (*gorm.DB, error) {
 	return db, nil
 }
 
-// func CreateAccountFromPhone(phonenumber string) (*models.User, error) {
-// 	user := models.User{PhoneNumber: phonenumber,}
-// 	if err := db.Create(&user).Error; err != nil {
-// 		return nil, err
-// 	}
-// }
