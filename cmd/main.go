@@ -38,6 +38,5 @@ func main() {
 	r.GET("/", handlers.HealthGet)
 	r.GET("/healthCheck", handlers.HealthGet)
 	r.POST("/createAccount", handlers.CreateAccountPost(db))
-
 	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 }
