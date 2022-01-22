@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,27 +20,29 @@ func CreateAccountPost(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		results := db.Where("phone_number = ?", u.PhoneNumber).Find(&u); if results.Error != nil{
-			fmt.Println(results.Error)
+		results := db.Where("phone_number = ?", u.PhoneNumber).Find(&u)
+		if results.Error != nil {
+			log.Println(results.Error)
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create user."})
+			return
 		}
 
 		if results.RowsAffected > 0 {
-			c.JSON(http.StatusBadRequest, gin.H{"message": "user already exists"})
-			return 
+			c.JSON(http.StatusBadRequest, gin.H{"message": "user already exists."})
+			return
 		}
 
-		db := db.Create(&u); if db.Error != nil {
-				fmt.Println(db.Error)
-				c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create user"})
-				return
-			}
+		err := db.Create(&u).Error
+		if err != nil {
+			log.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create user."})
+			return
+		}
 
-		
 		c.JSON(http.StatusCreated, gin.H{
-			"message": "user succesfully created",
-			"data": u,
+			"message": "user succesfully created.",
+			"data":    u,
 		})
-	
-	}}
 
-
+	}
+}

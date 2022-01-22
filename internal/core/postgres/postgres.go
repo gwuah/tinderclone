@@ -43,4 +43,3 @@ func Init() (*gorm.DB, error) {
 
 	return db, nil
 }
-
