@@ -15,20 +15,34 @@ func CreateAccountPost(db *gorm.DB) gin.HandlerFunc {
 
 		if c.BindJSON(&u) != nil {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"message": "error. no phone number received",
+				"message": "failed to create user. check documentation: https://github.com/gwuah/tinderclone#readme",
 			})
 			return
 		}
 
-		if err := db.Create(&u).Error; err != nil {
-			log.Fatal(err)
+		results := db.Where("phone_number = ?", u.PhoneNumber).Find(&u)
+		if results.Error != nil {
+			log.Println(results.Error)
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create user."})
+			return
+		}
+
+		if results.RowsAffected > 0 {
+			c.JSON(http.StatusBadRequest, gin.H{"message": "user already exists."})
+			return
+		}
+
+		err := db.Create(&u).Error
+		if err != nil {
+			log.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create user."})
+			return
 		}
 
 		c.JSON(http.StatusCreated, gin.H{
-			"message": "phone number succesfully added",
-			"data": u,
+			"message": "user succesfully created.",
+			"data":    u,
 		})
 
 	}
-
 }
