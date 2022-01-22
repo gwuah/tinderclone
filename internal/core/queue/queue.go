@@ -41,8 +41,12 @@ func getPgxPool(dbUri string) (*pgx.ConnPool, error) {
 		return nil, err
 	}
 	pgxpool, err := pgx.NewConnPool(pgx.ConnPoolConfig{
-		ConnConfig:   pgxcfg,
-		AfterConnect: que.PrepareStatements,
+		ConnConfig: pgxcfg,
+		// Our hosted postgres instance only allows us to make 20 connections to the database.
+		// Mind you this is a different connection than the one inside postgres.Init()
+		// See here - https://data.heroku.com/datastores/75c50280-a8be-4ab8-9be6-e2ce4ed24839
+		MaxConnections: 15,
+		AfterConnect:   que.PrepareStatements,
 	})
 	if err != nil {
 		return nil, err
