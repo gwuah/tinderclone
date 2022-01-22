@@ -19,7 +19,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	_, err = postgres.Init()
+	db, err := postgres.Init()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -36,7 +36,7 @@ func main() {
 
 	r.Use(middlewares.Cors())
 	r.GET("/", handlers.HealthGet)
-	r.GET("/healthcheck", handlers.HealthGet)
-
+	r.GET("/healthCheck", handlers.HealthGet)
+	r.POST("/createAccount", handlers.CreateAccountPost(db))
 	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 }

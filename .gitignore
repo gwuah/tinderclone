@@ -1,3 +1,4 @@
 *makefile
 .env
 .DS_Store
+*env
