@@ -16,28 +16,29 @@ This clone mirrors Tinder's geosocial networking application. It allows users an
 
 **Request**
 
-`GET /healthCheck`
++ `GET /healthCheck`
 
 **Response**
 
-+ returns a `StatusOk(200)` with an `ok` response if the server is up and running.
++ Returns a `StatusOk(200)` with an `ok` response if the server is up and running.
 
 ## Create User Account
 
 **Sample Request**
 
-`POST /createAccount`
++ `POST /createAccount`
 
-`Content-Type`: application/json
++ `Content-Type`: application/json
 
-`JSON body:` 
-
++ `JSON body:` 
+```
     {
     "phone_number" : "1234567"
     }
+```
 
 **Sample Response**
-
+```
     {
     "data": {
         "id": 2,
@@ -45,3 +46,4 @@ This clone mirrors Tinder's geosocial networking application. It allows users an
     },
     "message": "phone number succesfully added"
     }
+```
