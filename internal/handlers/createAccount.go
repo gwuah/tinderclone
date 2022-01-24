@@ -1,12 +1,13 @@
 package handlers
 
 import (
-	"log"
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/core/models"
+	"github.com/gwuah/tinderclone/lib"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
+	"log"
+	"net/http"
 )
 
 func CreateAccountPost(db *gorm.DB) gin.HandlerFunc {
@@ -28,11 +29,26 @@ func CreateAccountPost(db *gorm.DB) gin.HandlerFunc {
 		}
 
 		if results.RowsAffected > 0 {
+
 			c.JSON(http.StatusBadRequest, gin.H{"message": "user already exists."})
 			return
 		}
 
-		err := db.Create(&u).Error
+		code, err := lib.GenerateOTP()
+		if err != nil {
+			log.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create OTP"})
+		}
+
+		hashedCode, err := bcrypt.GenerateFromPassword([]byte(code), bcrypt.DefaultCost)
+		if err != nil {
+			log.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to hash OTP"})
+		}
+
+		u.OTP = string(hashedCode)
+
+		err = db.Create(&u).Error
 		if err != nil {
 			log.Println(err)
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create user."})
