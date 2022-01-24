@@ -3,7 +3,7 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/core/models"
-	"github.com/gwuah/tinderclone/lib"
+	"github.com/gwuah/tinderclone/internal"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"log"
@@ -34,7 +34,7 @@ func CreateAccountPost(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		code, err := lib.GenerateOTP()
+		code, err := internal.GenerateOTP()
 		if err != nil {
 			log.Println(err)
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create OTP"})
