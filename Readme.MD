@@ -6,8 +6,8 @@ This clone mirrors Tinder's geosocial networking application. It allows users an
 # Development Usage (Installing)
 
 - Clone `.env.local` into a `.env` file
+    - Replace the variables accordingly to match your system
 - Copy the migration in `internal/core/migration/que.sql` and run it on your db. (We can find a better way later)
-- Replace the variables accordingly to match your system
 - Run `go run cmd/main.go` in your terminal
 
 # API Endpoints
@@ -22,7 +22,7 @@ This clone mirrors Tinder's geosocial networking application. It allows users an
 
 + returns a `StatusOk(200)` with an `ok` response if the server is up and running.
 
-## > Create User Account
+## Create User Account
 
 **Sample Request**
 
