@@ -36,6 +36,7 @@ func main() {
 
 	r.Use(middlewares.Cors())
 	r.GET("/", handlers.HealthGet)
+	// remove this or?
 	r.GET("/healthCheck", handlers.HealthGet)
 	r.POST("/createAccount", handlers.CreateAccountPost(db))
 	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
