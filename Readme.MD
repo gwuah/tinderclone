@@ -43,7 +43,7 @@ This clone mirrors Tinder's geosocial networking application. It allows users an
         "data": {
             "id": 2,
             "phone_number": "1234567"
-    },
+            },
         "message": "phone number succesfully added"
     }
 ```
