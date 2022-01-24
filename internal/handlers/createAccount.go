@@ -1,16 +1,13 @@
 package handlers
 
 import (
-	"log"
-	"net/http"
-	"time"
-
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/core/models"
 	"github.com/gwuah/tinderclone/lib"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/datatypes"
 	"gorm.io/gorm"
+	"log"
+	"net/http"
 )
 
 func CreateAccountPost(db *gorm.DB) gin.HandlerFunc {
@@ -37,16 +34,19 @@ func CreateAccountPost(db *gorm.DB) gin.HandlerFunc {
 			return
 		}
 
-		code, error := lib.GenerateOTP()
-		if error != nil {
-			log.Println(error)
+		code, err := lib.GenerateOTP()
+		if err != nil {
+			log.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create OTP"})
 		}
+
 		hashedCode, err := bcrypt.GenerateFromPassword([]byte(code), bcrypt.DefaultCost)
 		if err != nil {
 			log.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to hash OTP"})
 		}
 
-		u.OTP, u.Created = string(hashedCode), datatypes.Date(time.Now())
+		u.OTP = string(hashedCode)
 
 		err = db.Create(&u).Error
 		if err != nil {
