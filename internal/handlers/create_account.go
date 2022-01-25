@@ -3,7 +3,7 @@ package handlers
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/core/models"
-	"github.com/gwuah/tinderclone/lib"
+	"github.com/gwuah/tinderclone/internal/lib"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 	"log"
