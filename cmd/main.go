@@ -39,5 +39,6 @@ func main() {
 	// remove this or?
 	r.GET("/healthCheck", handlers.HealthGet)
 	r.POST("/createAccount", handlers.CreateAccountPost(db))
+	r.POST("/verifyOTP", handlers.VerifyCodePost(db))
 	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 }

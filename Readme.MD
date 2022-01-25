@@ -47,3 +47,4 @@ This clone mirrors Tinder's geosocial networking application. It allows users an
         "message": "phone number succesfully added"
     }
 ```
+**Errors**
