@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
+	"os/signal"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/config"
@@ -32,10 +34,33 @@ func main() {
 	workers := q.RegisterJobs([]queue.JobWorker{})
 	go workers.Start()
 
-	r := gin.Default()
 	handler := handlers.New(db)
-	r.Use(middlewares.Cors())
-	r.GET("/healthCheck", handler.HealthCheck)
-	r.POST("/createAccount", handler.CreateAccount)
-	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
+	httpEngine := gin.Default()
+
+	httpEngine.Use(middlewares.Cors())
+	httpEngine.GET("/healthCheck", handler.HealthCheck)
+	httpEngine.POST("/createAccount", handler.CreateAccount)
+
+	server := http.Server{
+		Addr:    fmt.Sprintf(":%s", os.Getenv("PORT")),
+		Handler: httpEngine,
+	}
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+
+	go func() {
+		<-quit
+		if err := server.Close(); err != nil {
+			log.Println("failed to shutdown server", err)
+		}
+	}()
+
+	if err := server.ListenAndServe(); err != nil {
+		if err == http.ErrServerClosed {
+			log.Println("server closed after interruption")
+		} else {
+			log.Println("unexpected server shutdown. err:", err)
+		}
+	}
 }
