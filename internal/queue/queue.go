@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/bgentry/que-go"
-	"github.com/gwuah/tinderclone/internal/core/postgres"
+	"github.com/gwuah/tinderclone/internal/postgres"
 	"github.com/jackc/pgx"
 )
 
