@@ -1,43 +1,49 @@
-## 1. How to run
+# Tinder clone
+
+This clone mirrors Tinder's geosocial networking application. It allows users anonymously like or dislike other users' profiles, which include their photos, a short bio, and a list of their interests. It extends its features by implementing its own custom matching algorithm. However, this clone does not include a messaging feature, *It leverages some other anonymous chat service.
+
+
+# Development Usage (Installing)
 
 - Clone `.env.local` into a `.env` file
+    - Replace the variables accordingly to match your system
 - Copy the migration in `internal/core/migration/que.sql` and run it on your db. (We can find a better way later)
-- Replace the variables accordingly to match your system
 - Run `go run cmd/main.go` in your terminal
 
-## 2. API Endpoints
+# API Endpoints
 
-### 2.1 Health check
+##  Health check
 
 **Request**
 
-`GET /healthCheck`
++ `GET /healthCheck`
 
 **Response**
 
-+ returns a `StatusOk(200)` with an `ok` response if the server is up and running.
++ Returns a `StatusOk(200)` with an `ok` response if the server is up and running.
 
-### 2.2 Create User Account
+## Create User Account
 
 **Sample Request**
 
-`POST /createAccount`
++ `POST /createAccount`
 
-`Content-Type`: application/json
++ `Content-Type`: application/json
 
-`JSON body:` 
-
++ `JSON body:` 
+```
     {
-    "phone_number" : "1234567"
+        "phone_number" : "1234567"
     }
-
+```
 
 **Sample Response**
-
+```
     {
-    "data": {
-        "id": 2,
-        "phone_number": "1234567"
-    },
-    "message": "phone number succesfully added"
+        "data": {
+            "id": 2,
+            "phone_number": "1234567"
+            },
+        "message": "phone number succesfully added"
     }
+```
