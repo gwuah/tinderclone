@@ -6,11 +6,11 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gwuah/tinderclone/internal/core/config"
-	"github.com/gwuah/tinderclone/internal/core/postgres"
-	"github.com/gwuah/tinderclone/internal/core/queue"
+	"github.com/gwuah/tinderclone/internal/config"
 	"github.com/gwuah/tinderclone/internal/handlers"
 	"github.com/gwuah/tinderclone/internal/middlewares"
+	"github.com/gwuah/tinderclone/internal/postgres"
+	"github.com/gwuah/tinderclone/internal/queue"
 )
 
 func main() {
@@ -26,18 +26,16 @@ func main() {
 
 	q, err := queue.New()
 	if err != nil {
-		log.Fatal("failed to initialize queue. err", err)
+		log.Fatal(err)
 	}
 
 	workers := q.RegisterJobs([]queue.JobWorker{})
 	go workers.Start()
 
 	r := gin.Default()
-
+	handler := handlers.New(db)
 	r.Use(middlewares.Cors())
-	r.GET("/", handlers.HealthGet)
-	// remove this or?
-	r.GET("/healthCheck", handlers.HealthGet)
-	r.POST("/createAccount", handlers.CreateAccountPost(db))
+	r.GET("/healthCheck", handler.HealthCheck)
+	r.POST("/createAccount", handler.CreateAccount)
 	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
 }

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/gwuah/tinderclone/internal/core/models"
+	"github.com/gwuah/tinderclone/internal/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
