@@ -12,11 +12,11 @@ import (
 func TestCreateAccountEndpoint(t *testing.T) {
 	port := os.Getenv("port")
 
-	postBody := map[string]interface{}{
+	PostBody := map[string]interface{}{
 		"phone_number": "5rxxxxxxxcscx",
 	}
 
-	body, err := json.Marshal(postBody)
+	body, err := json.Marshal(PostBody)
 	if err != nil {
 		t.Fatalf("expected no error, got %v", err)
 	}
