@@ -40,21 +40,13 @@ func main() {
 	httpEngine.Use(middlewares.Cors())
 	httpEngine.GET("/healthCheck", handler.HealthCheck)
 	httpEngine.POST("/createAccount", handler.CreateAccount)
+	httpEngine.POST("/verifyOTP", handler.VerifyOTP)
 
 	server := http.Server{
 		Addr:    fmt.Sprintf(":%s", os.Getenv("PORT")),
 		Handler: httpEngine,
 	}
 
-<<<<<<< HEAD
-	r.Use(middlewares.Cors())
-	r.GET("/", handlers.HealthGet)
-	// remove this or?
-	r.GET("/healthCheck", handlers.HealthGet)
-	r.POST("/createAccount", handlers.CreateAccountPost(db))
-	r.POST("/verifyOTP", handlers.VerifyCodePost(db))
-	r.Run(fmt.Sprintf(":%s", os.Getenv("PORT")))
-=======
 	quit := make(chan os.Signal)
 	signal.Notify(quit, os.Interrupt)
 
@@ -72,5 +64,4 @@ func main() {
 			log.Println("unexpected server shutdown. err:", err)
 		}
 	}
->>>>>>> 7dc9f9941008d106bc179c89a9295a6863050d43
 }

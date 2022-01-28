@@ -15,7 +15,7 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 
 	if c.BindJSON(&u) != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "failed to create user. check documentation: https://github.com/gwuah/tinderclone#readme",
+			"message": "failed to parse user request. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
 		})
 		return
 	}
@@ -23,7 +23,7 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 	results := h.db.Where("phone_number = ?", u.PhoneNumber).Find(&u)
 	if results.Error != nil {
 		log.Println(results.Error)
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create user."})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "no user found with that phone_number."})
 		return
 	}
 
