@@ -28,7 +28,6 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 	}
 
 	if results.RowsAffected > 0 {
-
 		c.JSON(http.StatusBadRequest, gin.H{"message": "user already exists."})
 		return
 	}

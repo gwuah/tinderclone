@@ -7,7 +7,15 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func New() error {
+func LoadTestConfig(path string) error {
+	if _, err := os.Stat(path); err == nil {
+		return godotenv.Load(path)
+	}
+
+	return nil
+}
+
+func LoadNormalConfig() error {
 	dir, err := os.Getwd()
 	if err != nil {
 		return err
