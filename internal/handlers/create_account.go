@@ -28,7 +28,6 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 	}
 
 	if results.RowsAffected > 0 {
-
 		c.JSON(http.StatusBadRequest, gin.H{"message": "user already exists."})
 		return
 	}
@@ -37,12 +36,14 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create OTP"})
+		return
 	}
 
 	hashedCode, err := bcrypt.GenerateFromPassword([]byte(code), bcrypt.DefaultCost)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to hash OTP"})
+		return
 	}
 
 	u.OTP = string(hashedCode)
