@@ -10,13 +10,13 @@ import (
 )
 
 // validate:"required"
-type VerifyRequest struct {
+type VerifyOTPRequest struct {
 	ID  uint   `json:"id"`
 	OTP string `json:"otp"`
 }
 
 func (h *Handler) VerifyOTP(c *gin.Context) {
-	var requestData VerifyRequest
+	var requestData VerifyOTPRequest
 	var u models.User
 
 	if c.BindJSON(&requestData) != nil {
@@ -33,7 +33,6 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 		return
 	}
 
-	// not sure if i should use 403 as the status code here?
 	err := bcrypt.CompareHashAndPassword([]byte(u.OTP), []byte(requestData.OTP))
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "failed to validate user OTP."})

@@ -47,19 +47,6 @@ This clone mirrors Tinder's geosocial networking application. It allows users an
     "message": "phone number succesfully added"
     }
 ```
-**Errors**
-<!-- should i dedicate a whole section to all of the errors? or run them per route or handler -->
-<!-- ```
-    {
-    "message": "failed to parse user request. check documentation: https://github.com/gwuah/tinderclone/#readme"
-    }
-```
-
-```
-    {
-    "message": "failed to create user."
-    }
-``` -->
 
 ## Verify User OTP
 
@@ -83,4 +70,31 @@ This clone mirrors Tinder's geosocial networking application. It allows users an
     "message": "OTP code verified."
     }
 ```
-**Errors**
+# Errors
+
+## 400
+
++ `StatusBadRequest`
+```
+    {
+    "message": "failed to parse user request. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD"
+    }
+```
+This error is returned when the service is unable to unmarshall JSON POST requests. Take a look at the ideal JSON POST formats [here]()
+
+```
+    {
+    "message": "user already exists."
+    }
+```
+In `create_account.go`, if a user attempts to create an account with a phone number that already exists in the database, this error is thrown. Make the request with a unique phone number or login instead.
+
+## 500
+
++ `StatusInternalServerError`
+```
+    {
+    "message": "no user found with that id."
+    }
+```
+a 500 error will be thrown when a database query fails, typically when queries to the database return empty. errors related to this will take the format of the reponse above.

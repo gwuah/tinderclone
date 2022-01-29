@@ -23,7 +23,7 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 	results := h.db.Where("phone_number = ?", u.PhoneNumber).Find(&u)
 	if results.Error != nil {
 		log.Println(results.Error)
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "no user found with that phone_number."})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "no user found with that phone number."})
 		return
 	}
 
