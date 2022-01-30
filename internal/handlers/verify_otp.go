@@ -3,6 +3,7 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/models"
@@ -30,6 +31,11 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 	if results.Error != nil {
 		log.Println(results.Error)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "no user found with that id."})
+		return
+	}
+
+	if u.CreatedAt.Add(2 * time.Minute).Before(time.Now()) {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "Expired OTP. Generate a new OTP."})
 		return
 	}
 
