@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -20,12 +21,16 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
+	fmt.Println(u.CreatedAt, u.OTP, u.PhoneNumber)
+
 	results := h.db.Where("phone_number = ?", u.PhoneNumber).Find(&u)
 	if results.Error != nil {
 		log.Println(results.Error)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create user."})
 		return
 	}
+
+	fmt.Println(u.CreatedAt, u.OTP, u.PhoneNumber)
 
 	if results.RowsAffected > 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "user already exists."})

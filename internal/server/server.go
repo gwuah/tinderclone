@@ -9,23 +9,24 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/handlers"
-	"github.com/gwuah/tinderclone/internal/middlewares"
 )
 
 type Server struct {
-	h   *handlers.Handler
-	e   *gin.Engine
-	srv http.Server
+	h          *handlers.Handler
+	e          *gin.Engine
+	srv        http.Server
+	middleware []gin.HandlerFunc
 }
 
-func New(h *handlers.Handler) *Server {
+func New(h *handlers.Handler, middleware ...gin.HandlerFunc) *Server {
 	return &Server{
-		h: h,
-		e: gin.Default(),
+		h:          h,
+		e:          gin.Default(),
+		middleware : middleware,
 	}
 }
 
-func (s *Server) SetupMiddlewares(m []gin.HandlerFunc) {
+func (s *Server) setupMiddlewares(m []gin.HandlerFunc) {
 	s.e.Use(m...)
 }
 
@@ -35,8 +36,7 @@ func (s *Server) setupRoutes() {
 }
 
 func (s *Server) Start() {
-	middlewares := []gin.HandlerFunc{middlewares.Cors()}
-	s.SetupMiddlewares(middlewares)
+	s.setupMiddlewares(s.middleware)
 
 	s.setupRoutes()
 
