@@ -10,7 +10,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// validate:"required"
 type VerifyOTPRequest struct {
 	ID  uint   `json:"id"`
 	OTP string `json:"otp"`
@@ -31,11 +30,6 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 	if results.Error != nil {
 		log.Println(results.Error)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "no user found with that id."})
-		return
-	}
-
-	if u.CreatedAt.Add(2 * time.Minute).Before(time.Now()) {
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "Expired OTP. Generate a new OTP."})
 		return
 	}
 
