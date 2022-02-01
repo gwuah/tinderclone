@@ -1,11 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"os"
-	"strings"
-
 	"github.com/gwuah/tinderclone/internal/config"
 	"github.com/gwuah/tinderclone/internal/handlers"
 	"github.com/gwuah/tinderclone/internal/middlewares"
@@ -28,12 +24,6 @@ func main() {
 	q, err := queue.New()
 	if err != nil {
 		log.Fatal(err)
-	}
-
-	for _, e := range os.Environ() {
-
-		pair := strings.SplitN(e, "=", 2)
-		fmt.Printf("%s: %s\n", pair[0], pair[1])
 	}
 
 	handler := handlers.New(db)

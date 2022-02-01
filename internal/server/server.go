@@ -22,7 +22,7 @@ func New(h *handlers.Handler, middleware ...gin.HandlerFunc) *Server {
 	return &Server{
 		h:          h,
 		e:          gin.Default(),
-		middleware : middleware,
+		middleware: middleware,
 	}
 }
 
