@@ -1,3 +1,4 @@
+-- +goose Up
 CREATE TABLE IF NOT EXISTS que_jobs
 (
   priority    smallint    NOT NULL DEFAULT 100,
@@ -13,3 +14,7 @@ CREATE TABLE IF NOT EXISTS que_jobs
 );
 
 COMMENT ON TABLE que_jobs IS '3';
+
+-- +goose Down
+DROP TABLE IF NOT EXISTS que_jobs;
+
