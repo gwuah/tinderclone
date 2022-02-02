@@ -32,18 +32,18 @@ This clone mirrors Tinder's geosocial networking application. It allows users an
 
 + `JSON body:` 
 ```
-    {
-        "phone_number" : "1234567"
-    }
+{
+   "phone_number" : "1234567"
+}
 ```
 
 **Sample Response**
 ```
-    {
-        "data": {
+{
+   "data": {
             "id": 2,
-            "phone_number": "1234567"
-            },
-        "message": "phone number succesfully added"
-    }
+           "phone_number": "1234567"
+           },
+   "message": "phone number succesfully added"
+}
 ```
