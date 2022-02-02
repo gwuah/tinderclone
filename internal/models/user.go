@@ -5,8 +5,9 @@ import (
 )
 
 type User struct {
-	ID          uint      `json:"id" gorm:"primary_key"`
-	PhoneNumber string    `json:"phone_number"`
-	OTP         string    `json:"otp"`
-	CreatedAt   time.Time `json:"created_at"`
+	ID           uint      `json:"id" gorm:"primary_key"`
+	PhoneNumber  string    `json:"phone_number"`
+	OTP          string    `json:"otp"`
+	CreatedAt    time.Time `json:"created_at"`
+	OTPCreatedAt time.Time `json:"otp_created_at"`
 }

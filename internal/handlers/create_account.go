@@ -3,6 +3,7 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/lib"
@@ -38,6 +39,9 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create OTP"})
 		return
 	}
+
+	// change
+	u.OTPCreatedAt = time.Now().Add(time.Minute * 3)
 
 	hashedCode, err := bcrypt.GenerateFromPassword([]byte(code), bcrypt.DefaultCost)
 	if err != nil {
