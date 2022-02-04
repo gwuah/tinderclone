@@ -10,6 +10,13 @@ This clone mirrors Tinder's geosocial networking application. It allows users an
 - Copy the migration in `internal/core/migration/que.sql` and run it on your db. (We can find a better way later)
 - Run `go run cmd/main.go` in your terminal
 
+# Tests
+
+- To write tests, a custom DB must be created.
+
+- Clone `env.local` into an `env.test` file 
+    - Replace the variables accordingly to match your test DB.
+
 # API Endpoints
 
 ##  Health check
