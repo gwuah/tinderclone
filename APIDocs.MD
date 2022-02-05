@@ -20,20 +20,20 @@
 
 + `JSON body:` 
 ```
-    {
-    "phone_number": "1234567"
-    }
+{
+"phone_number": "1234567"
+}
 ```
 
 **Sample Response**
 ```
-    {
-    "data": {
-        "id": 2,
-        "phone_number": "1234567"
-    },
-    "message": "phone number succesfully added"
-    }
+{
+"data": {
+    "id": 2,
+    "phone_number": "1234567"
+},
+"message": "phone number succesfully added"
+}
 ```
 
 ## Verify User OTP

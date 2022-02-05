@@ -40,7 +40,6 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
-	// change
 	u.OTPCreatedAt = time.Now().Add(time.Minute * 3)
 
 	hashedCode, err := bcrypt.GenerateFromPassword([]byte(code), bcrypt.DefaultCost)

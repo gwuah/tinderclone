@@ -16,3 +16,6 @@ This clone mirrors Tinder's geosocial networking application. It allows users an
 
 - Clone `env.local` into an `env.test` file 
     - Replace the variables accordingly to match your test DB.
+# API Documentation
+
+- You can jump right into the [API Documentation.](https://deeznuts.com)
