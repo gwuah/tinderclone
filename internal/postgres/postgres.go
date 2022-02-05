@@ -2,12 +2,10 @@ package postgres
 
 import (
 	"fmt"
-	"os"
-
-	"github.com/gwuah/tinderclone/internal/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"os"
 )
 
 func ConstructDatabaseURI() string {
@@ -32,11 +30,6 @@ func Init() (*gorm.DB, error) {
 	db, err := gorm.Open(postgres.Open(databaseUrl), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	err = db.AutoMigrate(&models.User{})
 	if err != nil {
 		return nil, err
 	}
