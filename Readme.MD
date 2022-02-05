@@ -9,3 +9,7 @@ This clone mirrors Tinder's geosocial networking application. It allows users an
     - Replace the variables accordingly to match your system
 - Copy the migration in `internal/migration/que.sql` and run it on your db. (We can find a better way later)
 - Run `go run cmd/main.go` in your terminal
+
+# API Documentation
+
+- You can jump right into the [API Documentation.](https://deeznuts.com)
