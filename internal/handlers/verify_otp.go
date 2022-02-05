@@ -10,10 +10,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// add otp_created at field to users and store when an otp is generated
-// reference that for validity check
-// write integration tests for verify otp
-// seperate readme to endpoint
 type VerifyOTPRequest struct {
 	ID  uint   `json:"id"`
 	OTP string `json:"otp"`
@@ -37,15 +33,12 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 		return
 	}
 
-	// change
 	if u.OTPCreatedAt.Before(time.Now()) {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "Expired OTP. Generate a new OTP."})
 		return
 	}
 
 	err := bcrypt.CompareHashAndPassword([]byte(u.OTP), []byte(requestData.OTP))
-	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "failed to validate user OTP."})
 		return
 	}
 

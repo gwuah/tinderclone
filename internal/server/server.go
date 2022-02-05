@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/handlers"
+	"github.com/gwuah/tinderclone/internal/middlewares"
 )
 
 type Server struct {
@@ -35,6 +36,8 @@ func (s *Server) setupRoutes() {
 }
 
 func (s *Server) Start() {
+	middlewares := []gin.HandlerFunc{middlewares.Cors()}
+	s.SetupMiddlewares(middlewares)
 
 	s.setupRoutes()
 
