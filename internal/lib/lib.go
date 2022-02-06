@@ -2,9 +2,21 @@ package lib
 
 import (
 	"crypto/rand"
+	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 const otpChars = "1234567890"
+
+func GenerateOTPExpiryDate() time.Time {
+	expiry := time.Now().Add(time.Minute * 3)
+	return expiry
+}
+
+func HashOTP(code string) ([]byte, error) {
+	return bcrypt.GenerateFromPassword([]byte(code), bcrypt.DefaultCost)
+}
 
 func GenerateOTP() (string, error) {
 	buffer := make([]byte, 5)

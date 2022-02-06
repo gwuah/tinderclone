@@ -2,10 +2,11 @@ package postgres
 
 import (
 	"fmt"
+	"os"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"os"
 )
 
 func ConstructDatabaseURI() string {

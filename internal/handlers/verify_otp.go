@@ -10,7 +10,7 @@ import (
 )
 
 type VerifyOTPRequest struct {
-	ID  uint   `json:"id"`
+	ID  string `json:"id"`
 	OTP string `json:"otp"`
 }
 
@@ -41,6 +41,6 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusAccepted, gin.H{"message": "otp code verified"})
+	c.JSON(http.StatusOK, gin.H{"message": "otp code verified"})
 
 }

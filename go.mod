@@ -8,6 +8,7 @@ require (
 	github.com/bgentry/que-go v1.0.1
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.7
+	github.com/gofrs/uuid v4.0.0+incompatible
 	github.com/jackc/pgx v3.6.2+incompatible
 	github.com/jaswdr/faker v1.10.1
 	github.com/joho/godotenv v1.4.0

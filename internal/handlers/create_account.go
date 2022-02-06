@@ -3,12 +3,10 @@ package handlers
 import (
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/models"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func (h *Handler) CreateAccount(c *gin.Context) {
@@ -40,10 +38,7 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
-	// change
-	u.OTPCreatedAt = time.Now().Add(time.Minute * 3)
-
-	hashedCode, err := bcrypt.GenerateFromPassword([]byte(code), bcrypt.DefaultCost)
+	hashedCode, err := lib.HashOTP(code)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to hash OTP"})
@@ -51,6 +46,7 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 	}
 
 	u.OTP = string(hashedCode)
+	u.OTPCreatedAt = lib.GenerateOTPExpiryDate()
 
 	if err = h.repo.UserRepo.CreateUser(&u); err != nil {
 		log.Println(err)

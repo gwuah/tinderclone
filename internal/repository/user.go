@@ -26,7 +26,7 @@ func (u *UserRepo) CreateUser(user *models.User) error {
 	return u.db.Create(&u).Error
 }
 
-func (u *UserRepo) FindUserByID(id uint) (*models.User, error) {
+func (u *UserRepo) FindUserByID(id string) (*models.User, error) {
 	var user models.User
 	db := u.db.Where("id = ?", id).Find(&user)
 	if db.Error != nil {
