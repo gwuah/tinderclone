@@ -1,6 +1,3 @@
-//go:build integration
-// +build integration
-
 package handlers_test
 
 import (
@@ -11,12 +8,9 @@ import (
 
 	"github.com/gwuah/tinderclone/internal/handlers"
 
-	"github.com/gwuah/tinderclone/internal/handlers"
 	"github.com/jaswdr/faker"
 	"github.com/stretchr/testify/assert"
 )
-
-// find out what that testmain in first test does in create account
 
 func TestVerifyOTPEndpoint(t *testing.T) {
 

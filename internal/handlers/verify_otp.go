@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gwuah/tinderclone/internal/models"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -17,7 +16,6 @@ type VerifyOTPRequest struct {
 
 func (h *Handler) VerifyOTP(c *gin.Context) {
 	var requestData VerifyOTPRequest
-	var u models.User
 
 	if c.BindJSON(&requestData) != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -26,22 +24,23 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 		return
 	}
 
-	results := h.db.Where("id = ?", requestData.ID).Find(&u)
-	if results.Error != nil {
-		log.Println(results.Error)
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "no user found with that id."})
+	user, err := h.repo.UserRepo.FindUserByID(requestData.ID)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "no user found with that id"})
 		return
 	}
 
-	if u.OTPCreatedAt.Before(time.Now()) {
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "Expired OTP. Generate a new OTP."})
+	if user.OTPCreatedAt.Before(time.Now()) {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "otp has expired. regenerate a new one"})
 		return
 	}
 
-	err := bcrypt.CompareHashAndPassword([]byte(u.OTP), []byte(requestData.OTP))
+	if err := bcrypt.CompareHashAndPassword([]byte(user.OTP), []byte(requestData.OTP)); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": "failed to verify otp"})
 		return
 	}
 
-	c.JSON(http.StatusAccepted, gin.H{"message": "OTP code verified."})
+	c.JSON(http.StatusAccepted, gin.H{"message": "otp code verified"})
 
 }

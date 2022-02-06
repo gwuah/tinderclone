@@ -7,6 +7,8 @@ import (
 	"github.com/gwuah/tinderclone/internal/handlers"
 	"github.com/gwuah/tinderclone/internal/postgres"
 	"github.com/gwuah/tinderclone/internal/queue"
+	"github.com/gwuah/tinderclone/internal/repository"
+
 	"github.com/gwuah/tinderclone/internal/server"
 )
 
@@ -21,12 +23,14 @@ func main() {
 		log.Fatal(err)
 	}
 
+	repo := repository.New(db)
+
 	q, err := queue.New()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	handler := handlers.New(db)
+	handler := handlers.New(repo)
 	server := server.New(handler)
 
 	workers := q.RegisterJobs([]queue.JobWorker{})
