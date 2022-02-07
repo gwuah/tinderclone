@@ -3,12 +3,10 @@ package handlers
 import (
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/models"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func (h *Handler) CreateAccount(c *gin.Context) {
@@ -21,14 +19,14 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
-	results := h.db.Where("phone_number = ?", u.PhoneNumber).Find(&u)
-	if results.Error != nil {
-		log.Println(results.Error)
+	_, rowsAffected, err := h.repo.UserRepo.FindUserByPhone(u.PhoneNumber)
+	if err != nil {
+		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "no user found with that phone number."})
 		return
 	}
 
-	if results.RowsAffected > 0 {
+	if rowsAffected > 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"message": "user already exists."})
 		return
 	}
@@ -40,9 +38,7 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
-	u.OTPCreatedAt = time.Now().Add(time.Minute * 3)
-
-	hashedCode, err := bcrypt.GenerateFromPassword([]byte(code), bcrypt.DefaultCost)
+	hashedCode, err := lib.HashOTP(code)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to hash OTP"})
@@ -50,9 +46,9 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 	}
 
 	u.OTP = string(hashedCode)
+	u.OTPCreatedAt = lib.GenerateOTPExpiryDate()
 
-	err = h.db.Create(&u).Error
-	if err != nil {
+	if err = h.repo.UserRepo.CreateUser(&u); err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create user."})
 		return

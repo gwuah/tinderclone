@@ -1,15 +1,15 @@
 package handlers
 
 import (
-	"gorm.io/gorm"
+	"github.com/gwuah/tinderclone/internal/repository"
 )
 
 type Handler struct {
-	db *gorm.DB
+	repo *repository.Repository
 }
 
-func New(db *gorm.DB) *Handler {
+func New(repo *repository.Repository) *Handler {
 	return &Handler{
-		db: db,
+		repo: repo,
 	}
 }

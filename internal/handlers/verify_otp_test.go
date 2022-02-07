@@ -1,6 +1,3 @@
-//go:build integration
-// +build integration
-
 package handlers_test
 
 import (
@@ -10,47 +7,23 @@ import (
 	"testing"
 
 	"github.com/gwuah/tinderclone/internal/handlers"
-	"github.com/jaswdr/faker"
 	"github.com/stretchr/testify/assert"
 )
 
-// find out what that testmain in first test does in create account
-
-func TestVerifyOTPEndpoint(t *testing.T) {
-
-	f := faker.New()
-
-	createReq := map[string]interface{}{
-		"phone_number": f.Numerify("+##############"),
-	}
-
-	createResp, createErr := handlers.MakeRequest("createAccount", os.Getenv("PORT"), createReq)
-	assert.NoError(t, createErr)
-
-	assert.Equal(t, http.StatusCreated, createResp.StatusCode)
-
-	var m map[string]interface{}
-	assert.NoError(t, json.NewDecoder(createResp.Body).Decode(&m))
-
-	defer createResp.Body.Close()
-
-	assert.Equal(t, "user succesfully created.", m["message"])
-
+func TestVerifyOTPEndpoint_HappyPath(t *testing.T) {
+	code, _, user := handlers.CreateTestUser(t)
+	handlers.SeedDB(&user)
 	verifyReq := map[string]interface{}{
-		"id":  f.UInt8(),
-		"otp": f.Numerify("#####"),
+		"id":  user.ID,
+		"otp": code,
 	}
-
 	verifyResp, verifyErr := handlers.MakeRequest("verifyOTP", os.Getenv("PORT"), verifyReq)
 	assert.NoError(t, verifyErr)
+	defer verifyResp.Body.Close()
 
-	assert.Equal(t, http.StatusInternalServerError, verifyResp.StatusCode)
+	assert.Equal(t, http.StatusOK, verifyResp.StatusCode)
 
 	var o map[string]interface{}
 	assert.NoError(t, json.NewDecoder(verifyResp.Body).Decode(&o))
-
-	defer verifyResp.Body.Close()
-
-	assert.Equal(t, "no user found with that id.", m["message"])
-
+	assert.Equal(t, "otp code verified", o["message"])
 }

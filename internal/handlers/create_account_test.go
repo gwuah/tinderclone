@@ -10,6 +10,7 @@ import (
 	"github.com/gwuah/tinderclone/internal/config"
 	"github.com/gwuah/tinderclone/internal/handlers"
 	"github.com/gwuah/tinderclone/internal/postgres"
+	"github.com/gwuah/tinderclone/internal/repository"
 	"github.com/gwuah/tinderclone/internal/server"
 	"github.com/jaswdr/faker"
 	"github.com/stretchr/testify/assert"
@@ -24,7 +25,8 @@ func TestMain(m *testing.M) {
 		log.Fatal(err)
 	}
 
-	handler := handlers.New(db)
+	repo := repository.New(db)
+	handler := handlers.New(repo)
 	srv := server.New(handler)
 
 	// defer srv.Stop()
