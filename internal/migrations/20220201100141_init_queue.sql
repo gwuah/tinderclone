@@ -16,5 +16,5 @@ CREATE TABLE IF NOT EXISTS que_jobs
 COMMENT ON TABLE que_jobs IS '3';
 
 -- +goose Down
-DROP TABLE IF NOT EXISTS que_jobs;
+DROP TABLE IF EXISTS que_jobs;
 
