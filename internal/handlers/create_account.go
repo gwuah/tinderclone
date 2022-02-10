@@ -19,6 +19,13 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
+	if u.PhoneNumber == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "must provide a phone number. field cannot be left empty",
+		})
+		return
+	}
+
 	_, rowsAffected, err := h.repo.UserRepo.FindUserByPhone(u.PhoneNumber)
 	if err != nil {
 		log.Println(err)
