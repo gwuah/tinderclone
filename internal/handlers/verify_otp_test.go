@@ -50,7 +50,6 @@ func TestVerifyOTPEndpoint_UnhappyPath(t *testing.T) {
 }
 
 func TestVerifyOTPEndpoint_UnHappyPathNoOTP(t *testing.T) {
-	// create empty var and try to unmarshal that
 	var otp string
 	_, _, user := handlers.CreateTestUser(t)
 	handlers.SeedDB(&user)
