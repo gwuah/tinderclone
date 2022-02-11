@@ -7,16 +7,15 @@ This clone mirrors Tinder's geosocial networking application. It allows users an
 
 - Clone `.env.local` into a `.env` file
     - Replace the variables accordingly to match your system
-- Copy the migration in `internal/migration/que.sql` and run it on your db. (We can find a better way later)
+- Run migrations in `internal/migrations` on your database (You'll need to work with `goose`)
 - Run `go run cmd/main.go` in your terminal
 
 
 # Tests
 
 - To write tests, a custom DB must be created.
-
 - Clone `env.local` into an `env.test` file 
-    - Replace the variables accordingly to match your test DB.
+    - Replace the variables accordingly to match your test DB
 
 
 # API Documentation
