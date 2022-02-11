@@ -11,16 +11,3 @@ func TestGenerateOTP(t *testing.T) {
 	}
 
 }
-func TestOTPCharLength(t *testing.T) {
-	if len(otpChars) != 10 {
-		t.Error("Test Failed: expcted OTPChars to be of lenght 10.")
-	}
-}
-
-// func TestOTPCharUnique(t *testing.T) {
-// 	for _, num := range otpChars {
-// 		if strings.Contains(otpChars, string(num)) {
-// 			t.Error("Test Failed: all characters in otpChars should be unique.")
-// 		}
-// 	}
-// }

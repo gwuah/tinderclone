@@ -52,6 +52,6 @@ func TestCreateAccountEndpoint(t *testing.T) {
 
 	defer resp.Body.Close()
 
-	assert.Equal(t, "user succesfully created.", m["message"])
+	assert.Equal(t, "user succesfully created", m["message"])
 
 }

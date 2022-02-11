@@ -31,7 +31,7 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 		return
 	}
 
-	if user.OTPCreatedAt.Before(time.Now()) {
+	if time.Now().After(user.OTPCreatedAt) {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "otp has expired. regenerate a new one"})
 		return
 	}

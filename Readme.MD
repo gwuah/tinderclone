@@ -1,6 +1,6 @@
 # Tinder clone
 
-This clone mirrors Tinder's geosocial networking application. It allows users anonymously like or dislike other users' profiles, which include their photos, a short bio, and a list of their interests. It extends its features by implementing its own custom matching algorithm. However, this clone does not include a messaging feature, *It leverages some other anonymous chat service.
+This clone mirrors Tinder's geosocial networking application. It allows users anonymously like or dislike other users' profiles -- which include their photos, a short bio, and a list of their interests. It extends its features by implementing its own custom matching algorithm and a quicker onboarding process. However, this clone does not include a messaging feature, *It leverages some other anonymous chat service.
 
 
 # Development Usage (Installing)
@@ -12,4 +12,5 @@ This clone mirrors Tinder's geosocial networking application. It allows users an
 
 # API Documentation
 
-- You can jump right into the [API Documentation.](https://deeznuts.com)
+- You can jump right into the [API Documentation](./APIDocs.md#API-Endpoints)
+ 
