@@ -2,12 +2,12 @@ package lib
 
 import (
 	"testing"
-
-	"github.com/stretchr/testify/assert"
 )
 
 func TestGenerateOTP(t *testing.T) {
-	otp, err := GenerateOTP()
-	assert.NoError(t, err)
-	assert.Equal(t, 5, len(otp))
+	test, _ := GenerateOTP()
+	if len(test) != 5 {
+		t.Error("Test Failed: expected GenerateOTP function to return only 5 digits.")
+	}
+
 }

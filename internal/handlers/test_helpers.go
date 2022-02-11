@@ -67,15 +67,15 @@ func CreateTestUser(t *testing.T) (string, string, *models.User) {
 	code, err := lib.GenerateOTP()
 	assert.NoError(t, err)
 
-	hashedCode, err := lib.HashOTP(code)
+	hasedCode, err := lib.HashOTP(code)
 	assert.NoError(t, err)
 
 	testUser := models.User{
 		ID:           NewUUID(),
 		PhoneNumber:  f.Numerify("+##############"),
-		OTP:          string(hashedCode),
+		OTP:          string(hasedCode),
 		OTPCreatedAt: lib.GenerateOTPExpiryDate(),
 	}
 
-	return code, string(hashedCode), &testUser
+	return code, string(hasedCode), &testUser
 }
