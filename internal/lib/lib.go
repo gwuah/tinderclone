@@ -32,3 +32,7 @@ func GenerateOTP() (string, error) {
 
 	return string(buffer), nil
 }
+
+func StrToPtr(s string) *string {
+	return &s
+}

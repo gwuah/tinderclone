@@ -71,7 +71,7 @@ func CreateTestUser(t *testing.T) (string, string, *models.User) {
 	assert.NoError(t, err)
 
 	testUser := models.User{
-		ID:           NewUUID(),
+		ID:           lib.StrToPtr(NewUUID()),
 		PhoneNumber:  f.Numerify("+##############"),
 		OTP:          string(hashedCode),
 		OTPCreatedAt: lib.GenerateOTPExpiryDate(),
