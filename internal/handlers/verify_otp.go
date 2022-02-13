@@ -24,6 +24,12 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 		})
 		return
 	}
+	if requestData.ID == "" || requestData.OTP == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "must provide an OTP and an ID. fields cannot be left empty",
+		})
+		return
+	}
 
 	user, err := h.repo.UserRepo.FindUserByID(requestData.ID)
 	if err != nil {
@@ -53,6 +59,5 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 		"data":    requestData,
 		"token":   token,
 	})
-	// TODO: reformat the response. it looks weird rn.
 
 }

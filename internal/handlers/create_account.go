@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -45,7 +44,6 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create otp"})
 		return
 	}
-	fmt.Print(code)
 
 	hashedCode, err := lib.HashOTP(code)
 	if err != nil {
