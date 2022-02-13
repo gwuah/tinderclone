@@ -52,7 +52,6 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
-	// TODO: JSON object no longer returns ID since UUID change. u.ID =
 	u.OTP = string(hashedCode)
 	u.OTPCreatedAt = lib.GenerateOTPExpiryDate()
 
