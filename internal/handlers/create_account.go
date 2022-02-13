@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -44,6 +45,7 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create otp"})
 		return
 	}
+	fmt.Print(code)
 
 	hashedCode, err := lib.HashOTP(code)
 	if err != nil {
@@ -52,6 +54,7 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
+	// TODO: JSON object no longer returns ID since UUID change. u.ID =
 	u.OTP = string(hashedCode)
 	u.OTPCreatedAt = lib.GenerateOTPExpiryDate()
 

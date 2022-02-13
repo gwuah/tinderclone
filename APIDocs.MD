@@ -29,10 +29,13 @@
 ```
 {
 "data": {
-    "id": 2,
-    "phone_number": "1234567"
+    "id": "ec13c712-e796-463a-9fe1-c823db96d8ab",
+    "phone_number": "23733839347",
+    "otp": "$2a$10$HG2Ln6EvaK7BQoC3Kpdppeqhrq0xuXVIiawr8fif.Gvedi7fX4lXS",
+    "created_at": "2022-02-13T10:30:09.9675082+01:00",
+    "otp_created_at": "2022-02-13T10:33:09.9675082+01:00"
 },
-"message": "phone number succesfully added"
+"message": "user succesfully created"
 }
 ```
 
@@ -47,15 +50,20 @@
 + `JSON body:`
 ```
 {
-"id": 1,
-"otp": "12647"
+"id": "ec13c712-e796-463a-9fe1-c823db96d8ab",
+"otp": "84165"
 }
 ```
 
 **Sample Response**
 ```
 {
-"message": "otp code verified"
+"message": "otp code verified",
+"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NDUzNTAxNTAsInN1YiI6IjM1YjA4NDA1LWVmZTMtNGM4Zi1iNjlhLTg3YTk2NWI3MjgxMSJ9.CT-i6XpqlTd_MlwoutLXMA55nYYWQx0x-P0zWUgvKf8",
+"data": {
+    "id": "35b08405-efe3-4c8f-b69a-87a965b72811",
+    "otp": "79298"
+}
 }
 ```
 # Errors

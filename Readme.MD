@@ -14,7 +14,6 @@ This clone mirrors Tinder's geosocial networking application. It allows users an
 # Tests
 
 - To write tests, a custom DB must be created.
-
 - Clone `env.local` into an `env.test` file 
     - Replace the variables accordingly to match your test DB.
 

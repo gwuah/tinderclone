@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gwuah/tinderclone/internal/middlewares"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -41,6 +42,17 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "otp code verified"})
+	token, err := middlewares.CreateAccessToken(*user)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "failed to generate jwt token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "otp code verified",
+		"data":    requestData,
+		"token":   token,
+	})
+	// TODO: reformat the response. it looks weird rn.
 
 }
