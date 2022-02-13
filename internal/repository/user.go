@@ -23,7 +23,7 @@ func (u *UserRepo) FindUserByPhone(phone string) (*models.User, int64, error) {
 }
 
 func (u *UserRepo) CreateUser(user *models.User) error {
-	return u.db.Select("PhoneNumber", "OTP", "CreatedAt", "OTPCreatedAt").Create(&user).Error
+	return u.db.Create(&user).Error
 }
 
 func (u *UserRepo) FindUserByID(id string) (*models.User, error) {
