@@ -4,52 +4,53 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"time"
+	"net/http"
+	"os"
 
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
-	"github.com/gwuah/tinderclone/internal/models"
+	"github.com/gwuah/tinderclone/internal/lib"
 )
 
-var tokenKey = []byte("This is a secret key")
-
-// TODO: generate more complex key
-
-type JWTAuthDetails struct {
-	jwt.StandardClaims
-}
-
-func CreateAccessToken(user models.User) (string, error) {
-	expiresAt := time.Now().Add(time.Hour * 24 * 7).Unix()
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, JWTAuthDetails{
-		StandardClaims: jwt.StandardClaims{
-			Subject:   user.ID,
-			ExpiresAt: expiresAt,
-		},
-	})
-
-	tokenString, err := token.SignedString(tokenKey)
-	if err != nil {
-		log.Println(err)
-		return "", err
+func AuthorizeJWT() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		const BEARER_SCHEMA = "Bearer"
+		var claims lib.JWTAuthDetails
+		authHeader := c.GetHeader("Authorization")
+		tokenString := authHeader[len(BEARER_SCHEMA):]
+		token, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			}
+			return os.Getenv("JWTOKENKEY"), nil
+		})
+		if err == nil && token.Valid {
+			claims := token.Claims.(jwt.MapClaims)
+			log.Println(claims)
+			log.Println("valid token")
+		} else {
+			log.Println(err)
+			log.Println("invalid token")
+			c.AbortWithStatus(http.StatusUnauthorized)
+		}
 	}
-	return tokenString, nil
 }
 
-func VerifyAccessToken(tokenString string) (uint, string, error) {
-	var claims JWTAuthDetails
+func VerifyAccessToken(tokenString string) (string, error) {
+	var claims lib.JWTAuthDetails
 	token, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
-		return tokenKey, nil
+		return os.Getenv("JWTOKENKEY"), nil
 	})
 	if err != nil {
-		return 0, "", err
+		return "", err
 	}
 	if !token.Valid {
-		return 0, "", errors.New("invalid token")
+		return "", errors.New("invalid token")
 	}
 
 	username := claims.Subject
-	return 0, username, nil
+	return username, nil
 }

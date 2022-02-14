@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/gwuah/tinderclone/internal/middlewares"
+	"github.com/gwuah/tinderclone/internal/lib"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -48,12 +48,12 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 		return
 	}
 
-	token, err := middlewares.CreateAccessToken(*user)
+	token, err := lib.GenerateJWTToken(*user)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "failed to generate jwt token"})
 		return
 	}
-
+	// TODO: Write bearer token to header
 	c.JSON(http.StatusOK, gin.H{
 		"message": "otp code verified",
 		"data":    requestData,

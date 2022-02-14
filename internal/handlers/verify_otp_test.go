@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/gwuah/tinderclone/internal/handlers"
 	"github.com/jaswdr/faker"
@@ -68,21 +69,19 @@ func TestVerifyOTPEndpoint_UnHappyPathNoOTP(t *testing.T) {
 	assert.Equal(t, "failed to verify otp", o["message"])
 }
 
-// func TestVerifyOTPEndpoint_UnHappyPathExpiredOTP(t *testing.T) {
-// 	code, _, user := handlers.CreateTestUser(t)
-// 	user.OTPCreatedAt = user.OTPCreatedAt.Add(time.Minute - 5)
-// 	fmt.Println(user.OTPCreatedAt)
-// 	fmt.Println(time.Now())
-// 	handlers.SeedDB(&user)
-// 	verifyReq := map[string]interface{}{
-// 		"id":  user.ID,
-// 		"otp": code,
-// 	}
-// 	verifyResp, verifyErr := handlers.MakeRequest("verifyOTP", os.Getenv("PORT"), verifyReq)
-// 	assert.NoError(t, verifyErr)
-// 	defer verifyResp.Body.Close()
+func TestVerifyOTPEndpoint_UnHappyPathExpiredOTP(t *testing.T) {
+	code, _, user := handlers.CreateTestUser(t)
+	user.OTPCreatedAt = user.OTPCreatedAt.Add(-5 * time.Minute)
+	handlers.SeedDB(&user)
+	verifyReq := map[string]interface{}{
+		"id":  user.ID,
+		"otp": code,
+	}
+	verifyResp, verifyErr := handlers.MakeRequest("verifyOTP", os.Getenv("PORT"), verifyReq)
+	assert.NoError(t, verifyErr)
+	defer verifyResp.Body.Close()
 
-// 	var o map[string]interface{}
-// 	assert.NoError(t, json.NewDecoder(verifyResp.Body).Decode(&o))
-// 	assert.Equal(t, "otp has expired. regenerate a new one", o["message"])
-// }
+	var o map[string]interface{}
+	assert.NoError(t, json.NewDecoder(verifyResp.Body).Decode(&o))
+	assert.Equal(t, "otp has expired. regenerate a new one", o["message"])
+}

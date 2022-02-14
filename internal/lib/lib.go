@@ -2,8 +2,12 @@ package lib
 
 import (
 	"crypto/rand"
+	"log"
+	"os"
 	"time"
 
+	"github.com/golang-jwt/jwt"
+	"github.com/gwuah/tinderclone/internal/models"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -31,4 +35,25 @@ func GenerateOTP() (string, error) {
 	}
 
 	return string(buffer), nil
+}
+
+type JWTAuthDetails struct {
+	jwt.StandardClaims
+}
+
+func GenerateJWTToken(user models.User) (string, error) {
+	expiresAt := time.Now().Add(time.Hour * 24 * 7).Unix()
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, JWTAuthDetails{
+		StandardClaims: jwt.StandardClaims{
+			Subject:   user.PhoneNumber,
+			ExpiresAt: expiresAt,
+		},
+	})
+
+	tokenString, err := token.SignedString([]byte(os.Getenv("JWTOKENKEY")))
+	if err != nil {
+		log.Println(err)
+		return "", err
+	}
+	return tokenString, nil
 }
