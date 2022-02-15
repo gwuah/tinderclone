@@ -1,12 +1,14 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/models"
+	"github.com/gwuah/tinderclone/internal/workers"
 )
 
 func (h *Handler) CreateAccount(c *gin.Context) {
@@ -61,8 +63,21 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
+	err = h.q.QueueJob(workers.SEND_SMS, workers.SMSPayload{
+		To:  u.PhoneNumber,
+		Sms: generateOTPMessage(code),
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to que sms otp"})
+		return
+	}
+
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "user succesfully created",
 		"data":    u,
 	})
+}
+
+func generateOTPMessage(otp string) string {
+	return fmt.Sprintf("Your otp code is - %s", otp)
 }

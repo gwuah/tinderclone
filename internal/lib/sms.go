@@ -3,12 +3,12 @@ package lib
 import (
 	"bytes"
 	"encoding/json"
-	"log"
+	"errors"
 	"net/http"
 )
 
 type SMS struct {
-	Key      string
+	APIKey   string
 	SenderID string
 }
 
@@ -30,7 +30,30 @@ type Response struct {
 
 const API_ENDPOINT = "https://api.ng.termii.com/api/sms/send"
 
-func MakettpPOSTRequest(endpoint string, requestBody interface{}) (*http.Response, error) {
+func NewSMS(senderID, apiKey string) (*SMS, error) {
+	if apiKey == "" {
+		return nil, errors.New("API key required")
+	}
+	return &SMS{APIKey: apiKey, SenderID: senderID}, nil
+}
+
+func (s *SMS) SendTextMessage(to string, sms string) (Response, error) {
+	message := Message{
+		ApiKey:  s.APIKey,
+		From:    s.SenderID,
+		Type:    "plain",
+		Channel: "generic",
+
+		To:  to,
+		Sms: sms,
+	}
+
+	_, err := MakeHttpPOSTRequest(API_ENDPOINT, message)
+
+	return Response{}, err
+}
+
+func MakeHttpPOSTRequest(endpoint string, requestBody interface{}) (*http.Response, error) {
 	body, err := json.Marshal(requestBody)
 	if err != nil {
 		return nil, err
@@ -45,22 +68,5 @@ func MakettpPOSTRequest(endpoint string, requestBody interface{}) (*http.Respons
 		return nil, err
 	}
 
-	return resp, err
-}
-
-func NewSMS(apiKey string) *SMS {
-	if apiKey == "" {
-		log.Fatal("API key required")
-	}
-	return &SMS{apiKey, "Tinder Clone"}
-}
-
-func (s *SMS) SendTextMessage(message Message) (*http.Response, error) {
-	message.ApiKey = s.Key
-	message.Type = "plain"
-	message.Channel = "generic"
-	message.From = s.SenderID
-
-	resp, err := MakettpPOSTRequest(API_ENDPOINT, message)
 	return resp, err
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/gwuah/tinderclone/internal/postgres"
 	"github.com/gwuah/tinderclone/internal/queue"
 	"github.com/gwuah/tinderclone/internal/repository"
+	"github.com/gwuah/tinderclone/internal/workers"
 
 	"github.com/gwuah/tinderclone/internal/server"
 )
@@ -25,18 +26,25 @@ func main() {
 		log.Fatal(err)
 	}
 
-	repo := repository.New(db, lib.NewSMS(os.Getenv("SMS_API_KEY")))
+	repo := repository.New(db)
+
+	sms, err := lib.NewSMS("Tinder Clone", os.Getenv("SMS_API_KEY"))
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	q, err := queue.New()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	handler := handlers.New(repo)
+	handler := handlers.New(repo, sms, q)
 	server := server.New(handler)
 
-	workers := q.RegisterJobs([]queue.JobWorker{})
-	go workers.Start()
+	w := q.RegisterJobs([]queue.JobWorker{
+		workers.NewSMSWorker(sms),
+	})
+	go w.Start()
 
 	server.Start()
 

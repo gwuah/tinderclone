@@ -54,12 +54,6 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 		return
 	}
 
-	var message *lib.Message
-	_, err = h.repo.UserRepo.SendSMS(message, user.PhoneNumber)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to send OTP using SMS"})
-	}
-
 	c.JSON(http.StatusOK, gin.H{
 		"message": "otp code verified",
 		"data":    requestData,

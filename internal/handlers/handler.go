@@ -1,15 +1,21 @@
 package handlers
 
 import (
+	"github.com/gwuah/tinderclone/internal/lib"
+	"github.com/gwuah/tinderclone/internal/queue"
 	"github.com/gwuah/tinderclone/internal/repository"
 )
 
 type Handler struct {
 	repo *repository.Repository
+	sms  *lib.SMS
+	q    *queue.Que
 }
 
-func New(repo *repository.Repository) *Handler {
+func New(repo *repository.Repository, sms *lib.SMS, q *queue.Que) *Handler {
 	return &Handler{
 		repo: repo,
+		sms:  sms,
+		q:    q,
 	}
 }
