@@ -2,9 +2,11 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/gwuah/tinderclone/internal/config"
 	"github.com/gwuah/tinderclone/internal/handlers"
+	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/postgres"
 	"github.com/gwuah/tinderclone/internal/queue"
 	"github.com/gwuah/tinderclone/internal/repository"
@@ -23,7 +25,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	repo := repository.New(db)
+	repo := repository.New(db, lib.NewSMS(os.Getenv("SMS_API_KEY")))
 
 	q, err := queue.New()
 	if err != nil {

@@ -1,16 +1,20 @@
 package repository
 
 import (
+	"net/http"
+
+	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/models"
 	"gorm.io/gorm"
 )
 
 type UserRepo struct {
-	db *gorm.DB
+	db  *gorm.DB
+	sms *lib.SMS
 }
 
-func NewUserRepo(db *gorm.DB) *UserRepo {
-	return &UserRepo{db: db}
+func NewUserRepo(db *gorm.DB, sms *lib.SMS) *UserRepo {
+	return &UserRepo{db: db, sms: sms}
 }
 
 func (u *UserRepo) FindUserByPhone(phone string) (*models.User, int64, error) {
@@ -33,4 +37,10 @@ func (u *UserRepo) FindUserByID(id string) (*models.User, error) {
 		return nil, db.Error
 	}
 	return &user, db.Error
+}
+
+func (u *UserRepo) SendSMS(message *lib.Message, phone_number string) (*http.Response, error) {
+	message.To = phone_number
+	resp, err := u.sms.SendTextMessage(*message)
+	return resp, err
 }

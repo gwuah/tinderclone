@@ -3,7 +3,6 @@ package handlers
 import (
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -18,7 +17,6 @@ type VerifyOTPRequest struct {
 
 func (h *Handler) VerifyOTP(c *gin.Context) {
 	var requestData VerifyOTPRequest
-	var message *lib.Message
 
 	if c.BindJSON(&requestData) != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -55,11 +53,9 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "failed to generate jwt token"})
 		return
 	}
-	
-	sms := lib.NewSMS(os.Getenv("SMS_API_KEY"))
-	message.To = user.PhoneNumber
-	_, err = sms.SendTextMessage(*message)
 
+	var message *lib.Message
+	_, err = h.repo.UserRepo.SendSMS(message, user.PhoneNumber)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to send OTP using SMS"})
 	}

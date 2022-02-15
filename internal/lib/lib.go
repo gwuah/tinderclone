@@ -1,11 +1,8 @@
 package lib
 
 import (
-	"bytes"
 	"crypto/rand"
-	"encoding/json"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
 	"time"
 )
 
@@ -33,22 +30,4 @@ func GenerateOTP() (string, error) {
 	}
 
 	return string(buffer), nil
-}
-
-func MakeSMSRequest(endpoint string, requestBody interface{}) (*http.Response, error) {
-	body, err := json.Marshal(requestBody)
-	if err != nil {
-		return nil, err
-	}
-	req, err := http.NewRequest("POST", endpoint, bytes.NewReader(body))
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	return resp, err
 }

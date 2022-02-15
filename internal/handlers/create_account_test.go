@@ -9,6 +9,7 @@ import (
 
 	"github.com/gwuah/tinderclone/internal/config"
 	"github.com/gwuah/tinderclone/internal/handlers"
+	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/postgres"
 	"github.com/gwuah/tinderclone/internal/repository"
 	"github.com/gwuah/tinderclone/internal/server"
@@ -25,7 +26,7 @@ func TestMain(m *testing.M) {
 		log.Fatal(err)
 	}
 
-	repo := repository.New(db)
+	repo := repository.New(db, lib.NewSMS(os.Getenv("SMS_API_KEY")))
 	handler := handlers.New(repo)
 	srv := server.New(handler)
 
