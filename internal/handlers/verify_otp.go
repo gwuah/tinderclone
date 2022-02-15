@@ -53,7 +53,7 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "failed to generate jwt token"})
 		return
 	}
-	// TODO: Write bearer token to header
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "otp code verified",
 		"data":    requestData,
