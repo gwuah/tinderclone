@@ -94,3 +94,12 @@ In `create_account.go`, if a user attempts to create an account with a phone num
 }
 ```
 a 500 error will be thrown when a database query fails, typically when queries to the database return empty. errors related to this will take the format of the reponse above
+
+special 500 errors could be sent on the `verifyOTP` endpoint if SMS service fails. The response takes this format:
+
++ `StatusInternalServerError`
+```
+{
+"message": "failed to send OTP using SMS"
+}
+```
