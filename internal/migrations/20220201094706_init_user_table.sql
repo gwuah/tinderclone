@@ -7,7 +7,5 @@ CREATE TABLE IF NOT EXISTS users
 	created_at 		TIMESTAMP 	NOT NULL
 );
 
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 -- +goose Down
 DROP TABLE IF EXISTS users ;
