@@ -35,6 +35,7 @@ func (s *Server) setupRoutes() {
 	s.e.POST("/verifyOTP", s.h.VerifyOTP)
 }
 
+
 func (s *Server) Start() {
 	middlewares := []gin.HandlerFunc{middlewares.Cors()}
 	s.SetupMiddlewares(middlewares)

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gwuah/tinderclone/internal/lib"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -20,6 +21,12 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 	if c.BindJSON(&requestData) != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "failed to parse user request. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
+		})
+		return
+	}
+	if requestData.ID == "" || requestData.OTP == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "must provide an OTP and an ID. fields cannot be left empty",
 		})
 		return
 	}
@@ -41,6 +48,16 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "otp code verified"})
+	token, err := lib.GenerateJWTToken(*user)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "failed to generate jwt token"})
+		return
+	}
+	// TODO: Write bearer token to header
+	c.JSON(http.StatusOK, gin.H{
+		"message": "otp code verified",
+		"data":    requestData,
+		"token":   token,
+	})
 
 }

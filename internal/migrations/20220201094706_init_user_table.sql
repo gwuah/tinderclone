@@ -7,6 +7,5 @@ CREATE TABLE IF NOT EXISTS users
 	created_at 		TIMESTAMP 	NOT NULL
 );
 
-
 -- +goose Down
 DROP TABLE IF EXISTS users ;
