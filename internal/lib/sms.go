@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 )
 
@@ -48,9 +49,15 @@ func (s *SMS) SendTextMessage(to string, sms string) (Response, error) {
 		Sms: sms,
 	}
 
-	_, err := MakeHttpPOSTRequest(API_ENDPOINT, message)
+	resp, err := MakeHttpPOSTRequest(API_ENDPOINT, message)
 
-	return Response{}, err
+	if err != nil {
+		log.Println(err)
+	}
+	
+	var res Response
+	json.NewDecoder(resp.Body).Decode(&res)
+	return res, err
 }
 
 func MakeHttpPOSTRequest(endpoint string, requestBody interface{}) (*http.Response, error) {

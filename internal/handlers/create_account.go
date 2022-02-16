@@ -68,7 +68,7 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		Sms: generateOTPMessage(code),
 	})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to que sms otp"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to queue sms otp"})
 		return
 	}
 

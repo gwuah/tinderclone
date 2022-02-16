@@ -48,7 +48,7 @@ func (s *SMSWorker) Worker() que.WorkFunc {
 			return nil
 		}
 
-		// anytime a job is succcesful, return "nil"
+		// anytime a job is successful, return "nil"
 		// any other thing and the job will be retried
 
 		return errors.New("something happened. retain")
