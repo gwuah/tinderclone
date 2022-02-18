@@ -3,12 +3,10 @@ import time
 from psycopg2 import connect, DatabaseError
 from dotenv import load_dotenv
 import argparse
+import sys
 
 load_dotenv()
-parser = argparse.ArgumentParser()
-parser.add_argument("-b", "--command", help="Goose command")
-args = parser.parse_args()
-cmd = args.command
+cmd = str(sys.argv[1])
 
 def connectDB():
     try:
