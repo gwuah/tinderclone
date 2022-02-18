@@ -2,10 +2,12 @@ import os
 import time
 from psycopg2 import connect, DatabaseError
 from dotenv import load_dotenv
-import argparse
 import sys
 
 load_dotenv()
+if len(sys.argv) > 2:
+    print("Too many arguments passed")
+    sys.exit()
 cmd = str(sys.argv[1])
 
 def connectDB():
