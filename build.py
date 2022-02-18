@@ -6,7 +6,7 @@ import argparse
 
 load_dotenv()
 parser = argparse.ArgumentParser()
-parser.add_argument("-cmd", "--command", help="Goose command")
+parser.add_argument("-b", "--command", help="Goose command")
 args = parser.parse_args()
 cmd = args.command
 
@@ -36,12 +36,8 @@ def connectGoose(cmd):
     except BaseException as error:
         print("Failed to run goose binary.")
 
-def main():
-    print("Running command...")
-    connectGoose(cmd)
 
 if __name__ == "__main__":
     connectDB()
-    print("\n You can now attempt database migrations")
-    main()
-    connectDB().cursor.close()
+    print("building...")
+    connectGoose(cmd)
