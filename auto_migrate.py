@@ -32,7 +32,7 @@ def connectGoose(cmd):
     try:
         print("Making connection to goose...")
         time.sleep(3)
-        os.system('cmd /k "goose -dir ./internal/migrations postgres "user={} password={} dbname={} sslmode=disable" {}"'.format(os.getenv("DB_USER"), os.getenv("DB_PASS"), os.getenv("DB_NAME"), cmd))
+        os.system('cmd /c "goose -dir ./internal/migrations postgres "user={} password={} dbname={} sslmode=disable" {}"'.format(os.getenv("DB_USER"), os.getenv("DB_PASS"), os.getenv("DB_NAME"), cmd))
     except BaseException as error:
         print("Failed to run goose binary.")
 
