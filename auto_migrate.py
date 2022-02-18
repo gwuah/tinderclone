@@ -2,8 +2,13 @@ import os
 import time
 from psycopg2 import connect, DatabaseError
 from dotenv import load_dotenv
+import argparse
 
 load_dotenv()
+parser = argparse.ArgumentParser()
+parser.add_argument("-cmd", "--command", help="Goose command")
+args = parser.parse_args()
+cmd = args.command
 
 def connectDB():
     try:
@@ -26,15 +31,13 @@ def connectDB():
 def connectGoose(cmd):
     try:
         print("Making connection to goose...")
+        time.sleep(3)
         os.system('cmd /k "goose -dir ./internal/migrations postgres "user={} password={} dbname={} sslmode=disable" {}"'.format(os.getenv("DB_USER"), os.getenv("DB_PASS"), os.getenv("DB_NAME"), cmd))
     except BaseException as error:
         print("Failed to run goose binary.")
 
 def main():
-    print("You can use 'up', 'down', 'status' and other goose commands to make migration changes")
-    cmd = input("> ")
-    time.sleep(3)
-
+    print("Running command...")
     connectGoose(cmd)
 
 if __name__ == "__main__":
@@ -42,8 +45,3 @@ if __name__ == "__main__":
     print("\n You can now attempt database migrations")
     main()
     connectDB().cursor.close()
-    # # introduce waitkey and then     finally:
-    #     if conn is not None:
-    #         conn.close()
-    #         print('Database connection closed.')
-
