@@ -11,8 +11,7 @@ cmd = str(sys.argv[1])
 
 def runMigration(cmd):
     try:
-        print("Running migrations...")
-        time.sleep(3)
+        print("Running sweet migrations...")
         os.system('cmd /c "goose -dir ./internal/migrations postgres "user={} password={} dbname={} sslmode=disable" {}"'.format(os.getenv("DB_USER"), os.getenv("DB_PASS"), os.getenv("DB_NAME"), cmd))
     except BaseException as error:
         print("Failed to run goose binary.")
