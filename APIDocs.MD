@@ -25,6 +25,12 @@
 }
 ```
 
+
+|     **Key**    | **Type** | **Remarks** |
+|:--------------:|:--------:|:-----------:|
+| `phone_number` | `string` | `required`  |
+
+
 **Sample Response**
 ```
 {
@@ -54,6 +60,12 @@
 "otp": "84165"
 }
 ```
+
+|     **Key**    | **Type** | **Remarks** |
+|:--------------:|:--------:|:-----------:|
+| `id` | `uuid` | required  |
+| `otp` | `string` | required  |
+
 
 **Sample Response**
 ```
