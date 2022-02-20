@@ -22,5 +22,5 @@ This clone mirrors Tinder's geosocial networking application. It allows users an
 
 # API Documentation
 
-- You can jump right into the [API Documentation](APIDocs.md#)
+- You can jump right into the [API Documentation](./APIDocs.md#)
  
