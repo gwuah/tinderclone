@@ -1,6 +1,5 @@
 import os
 import time
-from psycopg2 import connect, DatabaseError
 from dotenv import load_dotenv
 import sys
 
