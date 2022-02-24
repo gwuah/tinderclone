@@ -8,11 +8,11 @@ import (
 
 type Handler struct {
 	repo *repository.Repository
-	sms  *lib.SMS
+	sms  *lib.Termii
 	q    *queue.Que
 }
 
-func New(repo *repository.Repository, sms *lib.SMS, q *queue.Que) *Handler {
+func New(repo *repository.Repository, sms *lib.Termii, q *queue.Que) *Handler {
 	return &Handler{
 		repo: repo,
 		sms:  sms,
