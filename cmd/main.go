@@ -28,7 +28,7 @@ func main() {
 
 	repo := repository.New(db)
 
-	sms, err := lib.NewSMS("Tinder Clone", os.Getenv("SMS_API_KEY"))
+	sms, err := lib.NewTermii(os.Getenv("SMS_API_KEY"))
 	if err != nil {
 		log.Fatal(err)
 	}

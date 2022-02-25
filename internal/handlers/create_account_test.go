@@ -27,7 +27,7 @@ func TestMain(m *testing.M) {
 		log.Fatal(err)
 	}
 
-	sms, err := lib.NewSMS("Test", os.Getenv("SMS_API_KEY"))
+	sms, err := lib.NewTermii(os.Getenv("SMS_API_KEY"))
 	assert.NoError(&testing.T{}, err)
 	q, err := queue.New()
 	if err != nil {

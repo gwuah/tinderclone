@@ -11,7 +11,7 @@ import (
 )
 
 type SMSWorker struct {
-	sms *lib.SMS
+	termii *lib.Termii
 }
 
 type SMSPayload struct {
@@ -19,8 +19,8 @@ type SMSPayload struct {
 	Sms string `json:"sms"`
 }
 
-func NewSMSWorker(sms *lib.SMS) *SMSWorker {
-	return &SMSWorker{sms: sms}
+func NewSMSWorker(termii *lib.Termii) *SMSWorker {
+	return &SMSWorker{termii: termii}
 }
 
 func (s *SMSWorker) Identifier() queue.Job {
@@ -38,7 +38,7 @@ func (s *SMSWorker) Worker() que.WorkFunc {
 			return fmt.Errorf(fmt.Sprintf("won't retry again | %s", j.LastError.String))
 		}
 
-		response, err := s.sms.SendTextMessage(req.To, req.Sms)
+		response, err := s.termii.SendTextMessage(req.To, req.Sms)
 		if err != nil {
 			return err
 		}
