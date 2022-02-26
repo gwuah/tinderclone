@@ -1,0 +1,4 @@
+-- +goose Up
+alter table users add country_code VARCHAR(4);
+
+-- +goose Down
