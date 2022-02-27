@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/models"
-	"github.com/gwuah/tinderclone/internal/workers"
 )
 
 func (h *Handler) CreateAccount(c *gin.Context) {
@@ -35,12 +34,18 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
+	code, err := lib.GenerateOTP()
+
 	if rowsAffected > 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "user already exists"})
+		_, err = h.sms.SendTextMessage(u.PhoneNumber, generateOTPMessage(code))
+		if err != nil {
+			log.Println(err)
+		}
+		c.JSON(http.StatusBadRequest, gin.H{"message": "user already exists, otp sent to user"})
 		return
 	}
 
-	code, err := lib.GenerateOTP()
+	
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create otp"})
@@ -63,13 +68,10 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
-	err = h.q.QueueJob(workers.SEND_SMS, workers.SMSPayload{
-		To:  u.PhoneNumber,
-		Sms: generateOTPMessage(code),
-	})
+	//TODO: Use workers to send SMS
+	_, err = h.sms.SendTextMessage(u.PhoneNumber, generateOTPMessage(code))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to queue sms otp"})
-		return
+		log.Println(err)
 	}
 
 	c.JSON(http.StatusCreated, gin.H{

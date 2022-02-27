@@ -33,7 +33,7 @@ func NewTermii(apiKey string) (*Termii, error) {
 	if apiKey == "" {
 		return nil, errors.New("API key required")
 	}
-	return &Termii{APIKey: apiKey}, nil
+	return &Termii{APIKey: apiKey, SenderID: "electra"}, nil
 }
 
 func (t *Termii) SendTextMessage(to string, sms string) (Response, error) {

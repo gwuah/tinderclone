@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,10 +14,10 @@ func TestGenerateOTP(t *testing.T) {
 }
 
 func TestSendSMS(t *testing.T) {
-	sms, err := NewTermii("")
+	sms, err := NewTermii(os.Getenv("SMS_API_KEY"))
 	assert.NoError(t, err)
 
-	_, err = sms.SendTextMessage("233548669560", "Wo ho fin")
+	_, err = sms.SendTextMessage("", "test")
 
 	assert.NoError(t, err)
 }

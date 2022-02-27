@@ -92,7 +92,7 @@ This error is returned when the service is unable to unmarshal JSON POST request
 
 ```
 {
-"message": "user already exists"
+"message": "user already exists, otp sent to user"
 }
 ```
 In `create_account.go`, if a user attempts to create an account with a phone number that already exists in the database, this error is thrown. Make the request with a unique phone number or login instead
