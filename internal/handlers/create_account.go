@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -33,12 +34,18 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
+	code, err := lib.GenerateOTP()
+
 	if rowsAffected > 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "user already exists"})
+		_, err = h.sms.SendTextMessage(u.PhoneNumber, generateOTPMessage(code))
+		if err != nil {
+			log.Println(err)
+		}
+		c.JSON(http.StatusBadRequest, gin.H{"message": "user already exists, otp sent to user"})
 		return
 	}
 
-	code, err := lib.GenerateOTP()
+	
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create otp"})
@@ -61,8 +68,18 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
+	//TODO: Use workers to send SMS
+	_, err = h.sms.SendTextMessage(u.PhoneNumber, generateOTPMessage(code))
+	if err != nil {
+		log.Println(err)
+	}
+
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "user succesfully created",
 		"data":    u,
 	})
+}
+
+func generateOTPMessage(otp string) string {
+	return fmt.Sprintf("Your otp code is - %s", otp)
 }
