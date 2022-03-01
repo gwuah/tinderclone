@@ -21,7 +21,7 @@
 + `JSON body:` 
 ```
 {
-"code": "+234",
+"country_code": "+234",
 "phone_number": "090677114589"
 }
 ```
@@ -29,7 +29,7 @@
 
 |     **Key**    | **Type** | **Remarks** |
 |:--------------:|:--------:|:-----------:|
-| `code` | `string` | `required`  |
+| `country_code` | `string` | `required`  |
 | `phone_number` | `string` | `required`  |
 
 
