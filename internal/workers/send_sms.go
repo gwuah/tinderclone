@@ -2,7 +2,6 @@ package workers
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/bgentry/que-go"
@@ -34,9 +33,9 @@ func (s *SMSWorker) Worker() que.WorkFunc {
 			return fmt.Errorf("unmarshal job failed. args= %s | err= %w", string(j.Args), err)
 		}
 
-		if j.ErrorCount >= 2 {
-			return fmt.Errorf(fmt.Sprintf("won't retry again | %s", j.LastError.String))
-		}
+		// if j.ErrorCount >= 2 {
+		// 	return fmt.Errorf(fmt.Sprintf("won't retry again | %s", j.LastError.String))
+		// }
 
 		response, err := s.termii.SendTextMessage(req.To, req.Sms)
 		if err != nil {
@@ -44,10 +43,9 @@ func (s *SMSWorker) Worker() que.WorkFunc {
 		}
 
 		if response.MessageId != "" {
-			// message was sent successfully
 			return nil
 		}
 
-		return errors.New("something happened. retain")
-	}
+		s, _ := json.MarshalIndent(response, "", "\t")
+		return fmt.Errorf(fmt.Sprintf("failed to send sms, api response: \n %s", string(s)))}
 }

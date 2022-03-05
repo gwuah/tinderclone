@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/lib"
 	"golang.org/x/crypto/bcrypt"
+
 )
 
 type VerifyOTPRequest struct {
