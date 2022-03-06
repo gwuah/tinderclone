@@ -11,8 +11,8 @@ import (
 )
 
 type VerifyOTPRequest struct {
-	ID  string `json:"id"`
-	OTP string `json:"otp"`
+	ID  string `json:"id" binding:"required"`
+	OTP string `json:"otp" binding:"required"`
 }
 
 func (h *Handler) VerifyOTP(c *gin.Context) {
@@ -21,12 +21,6 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 	if c.BindJSON(&requestData) != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "failed to parse user request. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
-		})
-		return
-	}
-	if requestData.ID == "" || requestData.OTP == "" {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "must provide an OTP and an ID. fields cannot be left empty",
 		})
 		return
 	}

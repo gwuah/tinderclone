@@ -2,8 +2,8 @@ package lib
 
 import (
 	"crypto/rand"
-	"golang.org/x/crypto/bcrypt"
 	"time"
+	"golang.org/x/crypto/bcrypt"
 )
 
 const otpChars = "1234567890"
@@ -30,4 +30,10 @@ func GenerateOTP() (string, error) {
 	}
 
 	return string(buffer), nil
+}
+
+
+func GetDob(date string) time.Time {
+	dateOfBirth, _ := time.Parse("02/01/2006", date)
+	return dateOfBirth
 }

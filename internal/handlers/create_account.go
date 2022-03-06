@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/models"
+	"github.com/gwuah/tinderclone/internal/workers"
 )
 
 func (h *Handler) CreateAccount(c *gin.Context) {
@@ -45,9 +46,7 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
-	
 	if err != nil {
-		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create otp"})
 		return
 	}
@@ -68,10 +67,14 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
-	//TODO: Use workers to send SMS
-	_, err = h.sms.SendTextMessage(u.PhoneNumber, generateOTPMessage(code))
+	err = h.q.QueueJob(workers.SEND_SMS, workers.SMSPayload{
+		To:  u.PhoneNumber,
+		Sms: generateOTPMessage(code),
+	})
+
 	if err != nil {
-		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to que sms otp"})
+		return
 	}
 
 	c.JSON(http.StatusCreated, gin.H{
