@@ -34,3 +34,9 @@ func (u *UserRepo) FindUserByID(id string) (*models.User, error) {
 	}
 	return &user, db.Error
 }
+
+	
+func (u *UserRepo) UpdateUser(user *models.User) error {
+	db := u.db.Save(user)
+	return db.Error
+}

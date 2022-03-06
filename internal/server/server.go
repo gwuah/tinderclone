@@ -35,6 +35,7 @@ func (s *Server) setupRoutes() {
 	s.e.GET("/healthCheck", s.h.HealthCheck)
 	s.e.POST("/createAccount", s.h.CreateAccount)
 	s.e.POST("/verifyOTP", s.h.VerifyOTP)
+	s.e.POST("/updateAccount", s.h.UpdateAccount)
 }
 
 
