@@ -45,5 +45,6 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "failed to update user",
 		})
+		
 	}
 }
