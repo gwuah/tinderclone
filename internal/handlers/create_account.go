@@ -36,7 +36,12 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
-	newPhoneNumber := existingUser.CountryCode + strings.TrimPrefix(existingUser.PhoneNumber, "0")
+	var sanitizedTermiiPhone string
+	if string(existingUser.PhoneNumber[0]) == string("0") {
+		sanitizedTermiiPhone = existingUser.CountryCode + strings.TrimPrefix(existingUser.PhoneNumber, "0")
+	} else {
+		sanitizedTermiiPhone = existingUser.CountryCode + existingUser.PhoneNumber
+	}
 
 	code, err := lib.GenerateOTP()
 	if err != nil {
@@ -64,7 +69,7 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		}
 
 		err = h.q.QueueJob(workers.SEND_SMS, workers.SMSPayload{
-			To:  newPhoneNumber,
+			To:  sanitizedTermiiPhone,
 			Sms: generateOTPMessage(code),
 		})
 
@@ -83,7 +88,7 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 	}
 
 	err = h.q.QueueJob(workers.SEND_SMS, workers.SMSPayload{
-		To:  newPhoneNumber,
+		To:  sanitizedTermiiPhone,
 		Sms: generateOTPMessage(code),
 	})
 	if err != nil {
