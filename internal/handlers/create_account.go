@@ -13,45 +13,35 @@ import (
 )
 
 func (h *Handler) CreateAccount(c *gin.Context) {
-	var u models.User
+	var existingUser *models.User
 
-	if c.BindJSON(&u) != nil {
+	if c.BindJSON(existingUser) != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "failed to parse user request. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
 		})
 		return
 	}
 
-	if u.PhoneNumber == "" {
+	if existingUser.PhoneNumber == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "must provide a phone number. field cannot be left empty",
 		})
 		return
 	}
 
-	_, rowsAffected, err := h.repo.UserRepo.FindUserByPhone(u.PhoneNumber)
+	existingUser, rowsAffected, err := h.repo.UserRepo.FindUserByPhone(existingUser.PhoneNumber)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "no user found with that phone number"})
 		return
 	}
 
-	newPhoneNumber := u.CountryCode + strings.TrimLeft(u.PhoneNumber, "0")
-	log.Println(newPhoneNumber)
+	newPhoneNumber := existingUser.CountryCode + strings.TrimPrefix(existingUser.PhoneNumber, "0")
 
 	code, err := lib.GenerateOTP()
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create otp"})
-		return
-	}
-
-	if rowsAffected > 0 {
-		_, err = h.sms.SendTextMessage(newPhoneNumber, generateOTPMessage(code))
-		if err != nil {
-			log.Println(err)
-		}
-		c.JSON(http.StatusBadRequest, gin.H{"message": "user already exists, otp sent to user"})
 		return
 	}
 
@@ -62,10 +52,31 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
-	u.OTP = string(hashedCode)
-	u.OTPCreatedAt = lib.GenerateOTPExpiryDate()
+	existingUser.OTP = string(hashedCode)
+	existingUser.OTPCreatedAt = lib.GenerateOTPExpiryDate()
 
-	if err = h.repo.UserRepo.CreateUser(&u); err != nil {
+	if rowsAffected > 0 {
+		err := h.repo.UserRepo.Update(existingUser)
+		if err != nil {
+			log.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to update otp for existing user"})
+			return
+		}
+
+		err = h.q.QueueJob(workers.SEND_SMS, workers.SMSPayload{
+			To:  newPhoneNumber,
+			Sms: generateOTPMessage(code),
+		})
+
+		if err != nil {
+			log.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to queue sms otp"})
+			return
+		}
+		return
+	}
+
+	if err = h.repo.UserRepo.CreateUser(existingUser); err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create user"})
 		return
@@ -82,7 +93,7 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "user succesfully created",
-		"data":    u,
+		"data":    existingUser,
 	})
 }
 
