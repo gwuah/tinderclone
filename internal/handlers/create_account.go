@@ -78,6 +78,13 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to queue sms otp"})
 			return
 		}
+
+		existingUser.Sanitize()
+		c.JSON(http.StatusOK, gin.H{
+			"message": "user already existsjf",
+			"data":    existingUser,
+		})
+
 		return
 	}
 
@@ -96,6 +103,7 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
+	existingUser.Sanitize()
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "user succesfully created",
 		"data":    existingUser,
