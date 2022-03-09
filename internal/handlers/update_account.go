@@ -1,10 +1,12 @@
 package handlers
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/gwuah/tinderclone/internal/lib"
 	"log"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gwuah/tinderclone/internal/lib"
+	"github.com/gwuah/tinderclone/internal/models"
 )
 
 func (h *Handler) UpdateAccount(c *gin.Context) {
@@ -17,6 +19,7 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 	}
 
 	var u UpdateAccountRequest
+	var user models.User
 
 	if err := c.BindJSON(&u); err != nil {
 		log.Println(err)
@@ -26,24 +29,24 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		return
 	}
 
-	user, err := h.repo.UserRepo.FindUserByID(u.ID)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "no user found with that id",
-		})
-	}
-
+	user.ID = u.ID
 	user.DOB = lib.GetDob(u.DOB)
 	user.Location = u.Location
 	user.FirstName = u.FirstName
 
-	err = h.repo.UserRepo.UpdateUser(user)
+	err := h.repo.UserRepo.Update(&user)
 
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "failed to update user",
 		})
+		return
 	}
+
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "user successfully updated",
+		"data"	 : user,
+	})
 }
