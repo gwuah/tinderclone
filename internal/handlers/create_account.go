@@ -13,9 +13,9 @@ import (
 )
 
 func (h *Handler) CreateAccount(c *gin.Context) {
-	var existingUser *models.User
+	var newUser models.User
 
-	err := c.BindJSON(existingUser); if err != nil {
+	err := c.BindJSON(&newUser); if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "failed to parse user request. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
@@ -23,14 +23,14 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
-	if existingUser.PhoneNumber == "" {
+	if newUser.PhoneNumber == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "must provide a phone number. field cannot be left empty",
 		})
 		return
 	}
 
-	existingUser, rowsAffected, err := h.repo.UserRepo.FindUserByPhone(existingUser.PhoneNumber)
+	existingUser, rowsAffected, err := h.repo.UserRepo.FindUserByPhone(newUser.PhoneNumber)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "no user found with that phone number"})
@@ -38,10 +38,10 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 	}
 
 	var sanitizedTermiiPhone string
-	if string(existingUser.PhoneNumber[0]) == "0" {
-		sanitizedTermiiPhone = existingUser.CountryCode + strings.TrimPrefix(existingUser.PhoneNumber, "0")
+	if string(newUser.PhoneNumber[0]) == "0" {
+		sanitizedTermiiPhone = newUser.CountryCode + strings.TrimPrefix(newUser.PhoneNumber, "0")
 	} else {
-		sanitizedTermiiPhone = existingUser.CountryCode + existingUser.PhoneNumber
+		sanitizedTermiiPhone = newUser.CountryCode + newUser.PhoneNumber
 	}
 
 
@@ -59,10 +59,12 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
-	existingUser.OTP = string(hashedCode)
-	existingUser.OTPCreatedAt = lib.GenerateOTPExpiryDate()
+	newUser.OTP = string(hashedCode)
+	newUser.OTPCreatedAt = lib.GenerateOTPExpiryDate()
 
 	if rowsAffected > 0 {
+		existingUser.OTP = string(hashedCode)
+		existingUser.OTPCreatedAt = lib.GenerateOTPExpiryDate()
 		err := h.repo.UserRepo.Update(existingUser)
 		if err != nil {
 			log.Println(err)
@@ -90,7 +92,7 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
-	if err = h.repo.UserRepo.CreateUser(existingUser); err != nil {
+	if err = h.repo.UserRepo.CreateUser(&newUser); err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create user"})
 		return
@@ -105,10 +107,10 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
-	existingUser.Sanitize()
+	newUser.Sanitize()
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "user succesfully created",
-		"data":    existingUser,
+		"data":    newUser,
 	})
 }
 

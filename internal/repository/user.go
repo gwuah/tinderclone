@@ -36,5 +36,5 @@ func (u *UserRepo) FindUserByID(id string) (*models.User, error) {
 }
 
 func (u *UserRepo) Update(user *models.User) error {
-	return u.db.Model(models.User{}).Updates(user).Error
+	return u.db.Model(models.User{}).Where("id = ?", user.ID).Updates(&user).Error
 }
