@@ -11,4 +11,12 @@ type User struct {
 	OTP          string    `json:"otp"`
 	CreatedAt    time.Time `json:"created_at" sql:"type:timestamp without time zone" `
 	OTPCreatedAt time.Time `json:"otp_created_at" sql:"type:timestamp without time zone" `
+
+	FirstName string `json:"first_name"`
+	LastName  string
+	DOB       time.Time `json:"dob" sql:"type:timestamp without time zone"`
+	Gender    string    `json:"gender"`
+	Location  string    `json:"location"`
+	Interests []string  `json:"interests"`
+	Bio       string    `json:"bio"`
 }
