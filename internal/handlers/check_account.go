@@ -7,13 +7,23 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type checkUserProfile struct {
+type requestProfileScore struct {
 	ID string `json:"id"`
+}
+type ProfileScores struct {
+	FirstName    int `json:"firstname"`
+	LastName     int `json:"lastname"`
+	Location     int `json:"location"`
+	Bio          int `json:"bio"`
+	Gender       int `json:"gender"`
+	DOB          int `json:"dob"`
+	Interests    int `json:"interests"`
+	ProfilePhoto int `json:"profile_photo"`
 }
 
 func (h *Handler) CheckUser(c *gin.Context) {
-	var requestData checkUserProfile
-	var profileScore int
+	var requestData requestProfileScore
+	var score ProfileScores
 
 	if c.BindJSON(&requestData) != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -30,37 +40,31 @@ func (h *Handler) CheckUser(c *gin.Context) {
 	}
 
 	if user.FirstName != "" {
-		_ = AddScore(profileScore, 5)
+		score.FirstName = 5
 	}
 	if user.LastName != "" {
-		_ = AddScore(profileScore, 5)
+		score.LastName = 5
 	}
 	if user.Location != "" {
-		_ = AddScore(profileScore, 15)
+		score.Location = 15
 	}
 	if user.Bio != "" {
-		_ = AddScore(profileScore, 5)
+		score.Bio = 5
 	}
 	if user.Gender != "" {
-		_ = AddScore(profileScore, 20)
+		score.Gender = 20
 	}
 	if !user.DOB.IsZero() {
-		_ = AddScore(profileScore, 15)
+		score.DOB = 15
 	}
 	if user.Interests[0] != "" {
-		_ = AddScore(profileScore, 10)
+		score.Interests = 10
 	}
 
-	// profile photo = 25
+	//TODO: profile photo = 25
 
 	c.JSON(http.StatusOK, gin.H{
-		"profile_score": profileScore,
-		"data":          user,
+		"data": score,
 	})
 
-}
-
-func AddScore(profileScore int, rubrik int) int {
-	score := profileScore + rubrik
-	return score
 }
