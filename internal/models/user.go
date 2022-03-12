@@ -12,3 +12,8 @@ type User struct {
 	CreatedAt    time.Time `json:"created_at" sql:"type:timestamp without time zone" `
 	OTPCreatedAt time.Time `json:"otp_created_at" sql:"type:timestamp without time zone" `
 }
+
+func (u *User) Sanitize() {
+	u.OTP = ""
+	u.OTPCreatedAt = time.Time{}
+}

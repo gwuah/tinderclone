@@ -9,7 +9,9 @@ import (
 
 	"github.com/gwuah/tinderclone/internal/config"
 	"github.com/gwuah/tinderclone/internal/handlers"
+	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/postgres"
+	"github.com/gwuah/tinderclone/internal/queue"
 	"github.com/gwuah/tinderclone/internal/repository"
 	"github.com/gwuah/tinderclone/internal/server"
 	"github.com/jaswdr/faker"
@@ -25,8 +27,15 @@ func TestMain(m *testing.M) {
 		log.Fatal(err)
 	}
 
+	sms, err := lib.NewTermii(os.Getenv("SMS_API_KEY"))
+	assert.NoError(&testing.T{}, err)
+	q, err := queue.New()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	repo := repository.New(db)
-	handler := handlers.New(repo)
+	handler := handlers.New(repo, sms, q)
 	srv := server.New(handler)
 
 	// defer srv.Stop()
