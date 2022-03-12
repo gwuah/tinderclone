@@ -13,7 +13,7 @@ import (
 )
 
 func (h *Handler) CreateAccount(c *gin.Context) {
-	var newUser *models.User
+	var newUser models.User
 
 	err := c.BindJSON(&newUser); if err != nil {
 		log.Println(err)
@@ -92,7 +92,7 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 		return
 	}
 
-	if err = h.repo.UserRepo.CreateUser(newUser); err != nil {
+	if err = h.repo.UserRepo.CreateUser(&newUser); err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to create user"})
 		return
