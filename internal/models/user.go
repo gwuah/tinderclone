@@ -9,6 +9,7 @@ type User struct {
 	CountryCode  string    `json:"country_code"`
 	PhoneNumber  string    `json:"phone_number"`
 	OTP          string    `json:"otp"`
+	RawOTP       string    `json:"raw_otp"`
 	CreatedAt    time.Time `json:"created_at" sql:"type:timestamp without time zone" `
 	OTPCreatedAt time.Time `json:"otp_created_at" sql:"type:timestamp without time zone" `
 }
