@@ -14,4 +14,4 @@ type User struct {
 	FirstName    string    `json:"first_name"`
 	DOB          time.Time `json:"dob" sql:"type:timestamp without time zone"`
 	Location     string    `json:"location"`
-}	
+}

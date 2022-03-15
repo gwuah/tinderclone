@@ -9,14 +9,14 @@ import (
 	"github.com/gwuah/tinderclone/internal/models"
 )
 
-func (h *Handler) UpdateAccount(c *gin.Context) {
+type UpdateAccountRequest struct {
+	ID        string `json:"id" binding:"required"`
+	FirstName string `json:"first_name" binding:"required"`
+	DOB       string `json:"dob" binding:"required"`
+	Location  string `json:"location" binding:"required"`
+}
 
-	type UpdateAccountRequest struct {
-		ID        string `json:"id" binding:"required"`
-		FirstName string `json:"first_name" binding:"required"`
-		DOB       string `json:"dob" binding:"required"`
-		Location  string `json:"location" binding:"required"`
-	}
+func (h *Handler) UpdateAccount(c *gin.Context) {
 
 	var u UpdateAccountRequest
 	var user models.User
@@ -29,12 +29,15 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		return
 	}
 
-	user.ID = u.ID
-	user.DOB = lib.GetDob(u.DOB)
-	user.Location = u.Location
-	user.FirstName = u.FirstName
+	user = models.User{
 
-	err := h.repo.UserRepo.Update(&user)
+		ID:        u.ID,
+		DOB:       lib.GetDob(u.DOB),
+		Location:  u.Location,
+		FirstName: u.FirstName,
+	}
+
+	err := h.repo.UserRepo.UpdateUserByID(&user)
 
 	if err != nil {
 		log.Println(err)
@@ -44,9 +47,8 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		return
 	}
 
-
 	c.JSON(http.StatusOK, gin.H{
 		"message": "user successfully updated",
-		"data"	 : user,
+		"data":    user,
 	})
 }
