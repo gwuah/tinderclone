@@ -47,5 +47,6 @@ func (s *SMSWorker) Worker() que.WorkFunc {
 		}
 
 		s, _ := json.MarshalIndent(response, "", "\t")
-		return fmt.Errorf(fmt.Sprintf("failed to send sms, api response: \n %s", string(s)))}
+		return fmt.Errorf(fmt.Sprintf("failed to send sms, api response: \n %s", string(s)))
+	}
 }

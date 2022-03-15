@@ -1,9 +1,11 @@
 package handlers_test
 
 import (
+	"bytes"
 	"encoding/json"
+	"log"
 	"net/http"
-	"os"
+	"net/http/httptest"
 	"testing"
 	"time"
 
@@ -15,19 +17,27 @@ import (
 func TestVerifyOTPEndpoint_HappyPath(t *testing.T) {
 	code, _, user := handlers.CreateTestUser(t)
 	handlers.SeedDB(&user)
-	verifyReq := map[string]interface{}{
+	requestPostBody := map[string]interface{}{
 		"id":  user.ID,
 		"otp": code,
 	}
-	verifyResp, verifyErr := handlers.MakeRequest("verifyOTP", os.Getenv("PORT"), verifyReq)
-	assert.NoError(t, verifyErr)
-	defer verifyResp.Body.Close()
 
-	assert.Equal(t, http.StatusOK, verifyResp.StatusCode)
+	body, err := json.Marshal(requestPostBody)
+	if err != nil {
+		log.Print(err)
+	}
+	assert.NoError(t, err)
 
-	var o map[string]interface{}
-	assert.NoError(t, json.NewDecoder(verifyResp.Body).Decode(&o))
-	assert.Equal(t, "otp code verified", o["message"])
+	req, err := http.NewRequest("POST", "/verifyOTP", bytes.NewReader(body))
+	assert.NoError(t, err)
+
+	responseRecorder := httptest.NewRecorder()
+
+	testServer.ServeHTTP(responseRecorder, req)
+
+	var responseBody map[string]interface{}
+	assert.NoError(t, json.NewDecoder(responseRecorder.Result().Body).Decode(&responseBody))
+	assert.Equal(t, "otp code verified", responseBody["message"])
 }
 
 func TestVerifyOTPEndpoint_UnhappyPath(t *testing.T) {
@@ -35,53 +45,79 @@ func TestVerifyOTPEndpoint_UnhappyPath(t *testing.T) {
 
 	_, _, user := handlers.CreateTestUser(t)
 	handlers.SeedDB(&user)
-	verifyReq := map[string]interface{}{
+	requestPostBody := map[string]interface{}{
 		"id":  user.ID,
 		"otp": f.Numerify("#####"),
 	}
-	verifyResp, verifyErr := handlers.MakeRequest("verifyOTP", os.Getenv("PORT"), verifyReq)
-	assert.NoError(t, verifyErr)
-	defer verifyResp.Body.Close()
+	body, err := json.Marshal(requestPostBody)
+	if err != nil {
+		log.Print(err)
+	}
+	assert.NoError(t, err)
 
-	assert.Equal(t, http.StatusBadRequest, verifyResp.StatusCode)
+	req, err := http.NewRequest("POST", "/verifyOTP", bytes.NewReader(body))
+	assert.NoError(t, err)
 
-	var o map[string]interface{}
-	assert.NoError(t, json.NewDecoder(verifyResp.Body).Decode(&o))
-	assert.Equal(t, "failed to verify otp", o["message"])
+	responseRecorder := httptest.NewRecorder()
+
+	testServer.ServeHTTP(responseRecorder, req)
+
+	var responseBody map[string]interface{}
+	assert.NoError(t, json.NewDecoder(responseRecorder.Result().Body).Decode(&responseBody))
+	assert.Equal(t, "failed to verify otp", responseBody["message"])
 }
 
 func TestVerifyOTPEndpoint_UnHappyPathNoOTP(t *testing.T) {
 	var otp string
 	_, _, user := handlers.CreateTestUser(t)
 	handlers.SeedDB(&user)
-	verifyReq := map[string]interface{}{
+
+	requestPostBody := map[string]interface{}{
 		"id":  user.ID,
 		"otp": otp,
 	}
-	verifyResp, verifyErr := handlers.MakeRequest("verifyOTP", os.Getenv("PORT"), verifyReq)
-	assert.NoError(t, verifyErr)
-	defer verifyResp.Body.Close()
 
-	assert.Equal(t, http.StatusBadRequest, verifyResp.StatusCode)
+	body, err := json.Marshal(requestPostBody)
+	if err != nil {
+		log.Print(err)
+	}
+	assert.NoError(t, err)
 
-	var o map[string]interface{}
-	assert.NoError(t, json.NewDecoder(verifyResp.Body).Decode(&o))
-	assert.Equal(t, "failed to verify otp", o["message"])
+	req, err := http.NewRequest("POST", "/verifyOTP", bytes.NewReader(body))
+	assert.NoError(t, err)
+
+	responseRecorder := httptest.NewRecorder()
+
+	testServer.ServeHTTP(responseRecorder, req)
+
+	var responseBody map[string]interface{}
+	assert.NoError(t, json.NewDecoder(responseRecorder.Result().Body).Decode(&responseBody))
+	assert.Equal(t, "must provide an OTP and an ID. fields cannot be left empty", responseBody["message"])
 }
 
 func TestVerifyOTPEndpoint_UnHappyPathExpiredOTP(t *testing.T) {
 	code, _, user := handlers.CreateTestUser(t)
 	user.OTPCreatedAt = user.OTPCreatedAt.Add(-5 * time.Minute)
 	handlers.SeedDB(&user)
-	verifyReq := map[string]interface{}{
+	requestPostBody := map[string]interface{}{
 		"id":  user.ID,
 		"otp": code,
 	}
-	verifyResp, verifyErr := handlers.MakeRequest("verifyOTP", os.Getenv("PORT"), verifyReq)
-	assert.NoError(t, verifyErr)
-	defer verifyResp.Body.Close()
 
-	var o map[string]interface{}
-	assert.NoError(t, json.NewDecoder(verifyResp.Body).Decode(&o))
-	assert.Equal(t, "otp has expired. regenerate a new one", o["message"])
+	body, err := json.Marshal(requestPostBody)
+	if err != nil {
+		log.Print(err)
+	}
+	assert.NoError(t, err)
+
+	req, err := http.NewRequest("POST", "/verifyOTP", bytes.NewReader(body))
+	assert.NoError(t, err)
+
+	responseRecorder := httptest.NewRecorder()
+
+	testServer.ServeHTTP(responseRecorder, req)
+
+	var responseBody map[string]interface{}
+	assert.NoError(t, json.NewDecoder(responseRecorder.Result().Body).Decode(&responseBody))
+	assert.Equal(t, "otp has expired. regenerate a new one", responseBody["message"])
 }

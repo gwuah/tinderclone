@@ -30,10 +30,11 @@ func (s *Server) SetupMiddlewares(m []gin.HandlerFunc) {
 }
 
 //TODO: Set up route groups when we have authenticated routes and pass JWT middleware to authenticated routes
-func (s *Server) setupRoutes() {
+func (s *Server) setupRoutes() *gin.Engine {
 	s.e.GET("/healthCheck", s.h.HealthCheck)
 	s.e.POST("/createAccount", s.h.CreateAccount)
 	s.e.POST("/verifyOTP", s.h.VerifyOTP)
+	return s.e
 }
 
 func (s *Server) Start() {
@@ -68,4 +69,11 @@ func (s *Server) Start() {
 
 func (s *Server) Stop() error {
 	return s.srv.Close()
+}
+
+func (s *Server) TestStart() *gin.Engine {
+	middlewares := []gin.HandlerFunc{middlewares.Cors()}
+	s.SetupMiddlewares(middlewares)
+	engine := s.setupRoutes()
+	return engine
 }

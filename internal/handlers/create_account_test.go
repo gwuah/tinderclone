@@ -1,12 +1,16 @@
 package handlers_test
 
 import (
+	"bytes"
 	"encoding/json"
 	"log"
 	"net/http"
 	"os"
 	"testing"
 
+	"net/http/httptest"
+
+	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/config"
 	"github.com/gwuah/tinderclone/internal/handlers"
 	"github.com/gwuah/tinderclone/internal/lib"
@@ -17,6 +21,8 @@ import (
 	"github.com/jaswdr/faker"
 	"github.com/stretchr/testify/assert"
 )
+
+var testServer *gin.Engine
 
 func TestMain(m *testing.M) {
 	err := config.LoadTestConfig("../../.env.test")
@@ -37,30 +43,31 @@ func TestMain(m *testing.M) {
 	repo := repository.New(db)
 	handler := handlers.New(repo, sms, q)
 	srv := server.New(handler)
-
-	// defer srv.Stop()
-	go srv.Start()
-
+	testServer = srv.TestStart()
 	os.Exit(m.Run())
 }
 
 func TestCreateAccountEndpoint(t *testing.T) {
 	f := faker.New()
 
-	req := map[string]interface{}{
+	requestPostBody := map[string]interface{}{
 		"phone_number": f.Numerify("+##############"),
 	}
-
-	resp, err := handlers.MakeRequest("createAccount", os.Getenv("PORT"), req)
+	body, err := json.Marshal(requestPostBody)
+	if err != nil {
+		log.Print(err)
+	}
 	assert.NoError(t, err)
 
-	assert.Equal(t, http.StatusCreated, resp.StatusCode)
+	req, err := http.NewRequest("POST", "/createAccount", bytes.NewReader(body))
+	assert.NoError(t, err)
 
-	var m map[string]interface{}
-	assert.NoError(t, json.NewDecoder(resp.Body).Decode(&m))
+	responseRecorder := httptest.NewRecorder()
 
-	defer resp.Body.Close()
+	testServer.ServeHTTP(responseRecorder, req)
 
-	assert.Equal(t, "user succesfully created", m["message"])
+	var responseBody map[string]interface{}
+	assert.NoError(t, json.NewDecoder(responseRecorder.Result().Body).Decode(&responseBody))
+	assert.Equal(t, "user successfully created", responseBody["message"])
 
 }
