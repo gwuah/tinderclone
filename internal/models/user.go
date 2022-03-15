@@ -15,3 +15,8 @@ type User struct {
 	DOB          time.Time `json:"dob" sql:"type:timestamp without time zone"`
 	Location     string    `json:"location"`
 }
+
+func (u *User) Sanitize() {
+	u.OTP = ""
+	u.OTPCreatedAt = time.Time{}
+}

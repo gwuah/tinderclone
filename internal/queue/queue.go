@@ -11,22 +11,22 @@ import (
 	"github.com/jackc/pgx"
 )
 
-type JobIdentifier string
+type Job string
 
-func (i JobIdentifier) String() string {
-	return string(i)
+func (j Job) String() string {
+	return string(j)
 }
 
 type (
 	JobWorker interface {
-		Identifier() JobIdentifier
+		Identifier() Job
 		Worker() que.WorkFunc
 	}
 	QueImpl interface {
 		Close()
 		RegisterJobs(jobList []JobWorker) *que.WorkerPool
-		QueueJob(jobType JobIdentifier, payload interface{}) error
-		QueueFutureJob(jobType JobIdentifier, payload interface{}, time ...time.Time) error
+		QueueJob(jobType Job, payload interface{}) error
+		QueueFutureJob(jobType Job, payload interface{}, time ...time.Time) error
 	}
 	Que struct {
 		dbURI    string
@@ -78,7 +78,7 @@ func (q *Que) RegisterJobs(jobList []JobWorker) *que.WorkerPool {
 	return que.NewWorkerPool(q.client, wm, 10)
 }
 
-func (q *Que) QueueJob(jobType JobIdentifier, payload interface{}) error {
+func (q *Que) QueueJob(jobType Job, payload interface{}) error {
 	enc, err := json.Marshal(payload)
 	if err != nil {
 		return err
@@ -91,7 +91,7 @@ func (q *Que) QueueJob(jobType JobIdentifier, payload interface{}) error {
 	return nil
 }
 
-func (q *Que) QueueFutureJob(jobType JobIdentifier, payload interface{}, times ...time.Time) error {
+func (q *Que) QueueFutureJob(jobType Job, payload interface{}, times ...time.Time) error {
 	enc, err := json.Marshal(payload)
 	if err != nil {
 		return err
