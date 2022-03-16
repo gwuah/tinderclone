@@ -22,7 +22,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var testServer *gin.Engine
+var routeHandlers *gin.Engine
 
 func TestMain(m *testing.M) {
 	err := config.LoadTestConfig("../../.env.test")
@@ -43,31 +43,38 @@ func TestMain(m *testing.M) {
 	repo := repository.New(db)
 	handler := handlers.New(repo, sms, q)
 	srv := server.New(handler)
-	testServer = srv.TestStart()
+	routeHandlers = srv.SetupRoutes()
 	os.Exit(m.Run())
 }
 
 func TestCreateAccountEndpoint(t *testing.T) {
 	f := faker.New()
 
-	requestPostBody := map[string]interface{}{
+	req := MakeRequest(t, "/createAccount", map[string]interface{}{
 		"phone_number": f.Numerify("+##############"),
-	}
-	body, err := json.Marshal(requestPostBody)
-	if err != nil {
-		log.Print(err)
-	}
-	assert.NoError(t, err)
+	})
 
-	req, err := http.NewRequest("POST", "/createAccount", bytes.NewReader(body))
-	assert.NoError(t, err)
-
-	responseRecorder := httptest.NewRecorder()
-
-	testServer.ServeHTTP(responseRecorder, req)
+	response := bootstrapServer(req, routeHandlers)
 
 	var responseBody map[string]interface{}
-	assert.NoError(t, json.NewDecoder(responseRecorder.Result().Body).Decode(&responseBody))
+	assert.NoError(t, json.Unmarshal(response.Body.Bytes(), responseBody))
+
 	assert.Equal(t, "user successfully created", responseBody["message"])
 
+}
+
+func bootstrapServer(req *http.Request, routeHandlers *gin.Engine) *httptest.ResponseRecorder {
+	responseRecorder := httptest.NewRecorder()
+	routeHandlers.ServeHTTP(responseRecorder, req)
+	return responseRecorder
+}
+
+func MakeRequest(t *testing.T, route string, body interface{}) *http.Request {
+	reqBody, err := json.Marshal(body)
+	assert.NoError(t, err)
+
+	req, err := http.NewRequest("POST", route, bytes.NewReader(reqBody))
+	assert.NoError(t, err)
+
+	return req
 }
