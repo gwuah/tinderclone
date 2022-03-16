@@ -19,7 +19,7 @@ type UpdateAccountRequest struct {
 func (h *Handler) UpdateAccount(c *gin.Context) {
 
 	var u UpdateAccountRequest
-	var user models.User
+
 
 	if err := c.BindJSON(&u); err != nil {
 		log.Println(err)
@@ -29,7 +29,7 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		return
 	}
 
-	user = models.User{
+	user := models.User{
 
 		ID:        u.ID,
 		DOB:       lib.GetDob(u.DOB),
