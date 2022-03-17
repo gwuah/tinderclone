@@ -54,16 +54,14 @@ func TestCreateAccountEndpoint(t *testing.T) {
 		"phone_number": f.Numerify("+##############"),
 	})
 
-	response := bootstrapServer(req, routeHandlers)
-
-	var responseBody map[string]interface{}
-	assert.NoError(t, json.Unmarshal(response.Body.Bytes(), responseBody))
+	response := BootstrapServer(req, routeHandlers)
+	responseBody := DecodeResponse(t, response)
 
 	assert.Equal(t, "user successfully created", responseBody["message"])
 
 }
 
-func bootstrapServer(req *http.Request, routeHandlers *gin.Engine) *httptest.ResponseRecorder {
+func BootstrapServer(req *http.Request, routeHandlers *gin.Engine) *httptest.ResponseRecorder {
 	responseRecorder := httptest.NewRecorder()
 	routeHandlers.ServeHTTP(responseRecorder, req)
 	return responseRecorder
@@ -77,4 +75,10 @@ func MakeRequest(t *testing.T, route string, body interface{}) *http.Request {
 	assert.NoError(t, err)
 
 	return req
+}
+
+func DecodeResponse(t *testing.T, response *httptest.ResponseRecorder) map[string]interface{} {
+	var responseBody map[string]interface{}
+	assert.NoError(t, json.Unmarshal(response.Body.Bytes(), &responseBody))
+	return responseBody
 }
