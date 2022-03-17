@@ -45,6 +45,7 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 	// 	sanitizedTermiiPhone = newUser.CountryCode + newUser.PhoneNumber
 	// }
 
+
 	code, err := lib.GenerateOTP()
 	if err != nil {
 		log.Println(err)
