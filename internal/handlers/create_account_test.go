@@ -1,14 +1,9 @@
 package handlers_test
 
 import (
-	"bytes"
-	"encoding/json"
-	"log"
-	"net/http"
-	"os"
 	"testing"
-
-	"net/http/httptest"
+	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/config"
@@ -50,35 +45,14 @@ func TestMain(m *testing.M) {
 func TestCreateAccountEndpoint(t *testing.T) {
 	f := faker.New()
 
-	req := MakeRequest(t, "/createAccount", map[string]interface{}{
+	req := handlers.MakeTestRequest(t, "/createAccount", map[string]interface{}{
 		"phone_number": f.Numerify("+##############"),
 	})
 
-	response := BootstrapServer(req, routeHandlers)
-	responseBody := DecodeResponse(t, response)
+	response := handlers.BootstrapServer(req, routeHandlers)
+	responseBody := handlers.DecodeResponse(t, response)
 
 	assert.Equal(t, "user successfully created", responseBody["message"])
 
 }
 
-func BootstrapServer(req *http.Request, routeHandlers *gin.Engine) *httptest.ResponseRecorder {
-	responseRecorder := httptest.NewRecorder()
-	routeHandlers.ServeHTTP(responseRecorder, req)
-	return responseRecorder
-}
-
-func MakeRequest(t *testing.T, route string, body interface{}) *http.Request {
-	reqBody, err := json.Marshal(body)
-	assert.NoError(t, err)
-
-	req, err := http.NewRequest("POST", route, bytes.NewReader(reqBody))
-	assert.NoError(t, err)
-
-	return req
-}
-
-func DecodeResponse(t *testing.T, response *httptest.ResponseRecorder) map[string]interface{} {
-	var responseBody map[string]interface{}
-	assert.NoError(t, json.Unmarshal(response.Body.Bytes(), &responseBody))
-	return responseBody
-}
