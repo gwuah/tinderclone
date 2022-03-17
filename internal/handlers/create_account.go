@@ -15,7 +15,8 @@ import (
 func (h *Handler) CreateAccount(c *gin.Context) {
 	var newUser models.User
 
-	err := c.BindJSON(&newUser); if err != nil {
+	err := c.BindJSON(&newUser)
+	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "failed to parse user request. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
@@ -43,7 +44,6 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 	// } else {
 	// 	sanitizedTermiiPhone = newUser.CountryCode + newUser.PhoneNumber
 	// }
-
 
 	code, err := lib.GenerateOTP()
 	if err != nil {
@@ -111,7 +111,7 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 
 	newUser.Sanitize()
 	c.JSON(http.StatusCreated, gin.H{
-		"message": "user succesfully created",
+		"message": "user successfully created",
 		"data":    newUser,
 	})
 }
