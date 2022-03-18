@@ -18,7 +18,9 @@ type VerifyOTPRequest struct {
 func (h *Handler) VerifyOTP(c *gin.Context) {
 	var requestData VerifyOTPRequest
 
-	if c.BindJSON(&requestData) != nil {
+	err := c.BindJSON(&requestData)
+	if err != nil {
+		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "failed to parse user request. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
 		})
