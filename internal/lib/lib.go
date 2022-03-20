@@ -31,3 +31,8 @@ func GenerateOTP() (string, error) {
 
 	return string(buffer), nil
 }
+
+func GetDob(date string) time.Time {
+	dateOfBirth, _ := time.Parse("02/01/2006", date)
+	return dateOfBirth
+}

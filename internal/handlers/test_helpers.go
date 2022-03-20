@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"testing"
-	"net/http/httptest"
 	"log"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/gin-gonic/gin"
 
 	"github.com/gofrs/uuid"
@@ -82,6 +83,23 @@ func CreateTestUser(t *testing.T) (string, string, *models.User) {
 	return code, string(hashedCode), &testUser
 }
 
+func CreateCheckUser(t *testing.T) *models.User {
+	f := faker.New()
+
+	code, err := lib.GenerateOTP()
+	assert.NoError(t, err)
+
+	hashedCode, err := lib.HashOTP(code)
+	assert.NoError(t, err)
+
+	testUser := models.User{
+		ID:           NewUUID(),
+		PhoneNumber:  f.Numerify("+###########"),
+		OTP:          string(hashedCode),
+		OTPCreatedAt: lib.GenerateOTPExpiryDate(),
+	}
+	return &testUser
+}
 
 func BootstrapServer(req *http.Request, routeHandlers *gin.Engine) *httptest.ResponseRecorder {
 	responseRecorder := httptest.NewRecorder()

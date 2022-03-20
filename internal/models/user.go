@@ -12,14 +12,9 @@ type User struct {
 	RawOTP       string    `json:"raw_otp"`
 	CreatedAt    time.Time `json:"created_at" sql:"type:timestamp without time zone" `
 	OTPCreatedAt time.Time `json:"otp_created_at" sql:"type:timestamp without time zone" `
-
-	FirstName string `json:"first_name"`
-	LastName  string
-	DOB       time.Time `json:"dob" sql:"type:timestamp without time zone"`
-	Gender    string    `json:"gender"`
-	Location  string    `json:"location"`
-	Interests []string  `json:"interests"`
-	Bio       string    `json:"bio"`
+	FirstName    string    `json:"first_name"`
+	DOB          time.Time `json:"dob" sql:"type:timestamp without time zone"`
+	Location     string    `json:"location"`
 }
 
 func (u *User) Sanitize() {
