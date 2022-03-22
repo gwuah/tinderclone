@@ -42,24 +42,26 @@ func (h *Handler) CheckUser(c *gin.Context) {
 	if user.FirstName != "" {
 		score.FirstName = 5
 	}
-	if user.LastName != "" {
-		score.LastName = 5
+	if !user.DOB.IsZero() {
+		score.DOB = 15
 	}
 	if user.Location != "" {
 		score.Location = 15
 	}
-	if user.Bio != "" {
-		score.Bio = 5
-	}
-	if user.Gender != "" {
-		score.Gender = 20
-	}
-	if !user.DOB.IsZero() {
-		score.DOB = 15
-	}
-	if user.Interests[0] != "" {
-		score.Interests = 10
-	}
+	// if user.LastName != "" {
+	// 	score.LastName = 5
+	// }
+
+	// if user.Bio != "" {
+	// 	score.Bio = 5
+	// }
+	// if user.Gender != "" {
+	// 	score.Gender = 20
+	// }
+
+	// if user.Interests[0] != "" {
+	// 	score.Interests = 10
+	// }
 
 	//TODO: profile photo = 25
 

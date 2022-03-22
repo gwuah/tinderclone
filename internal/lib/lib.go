@@ -2,8 +2,10 @@ package lib
 
 import (
 	"crypto/rand"
-	"golang.org/x/crypto/bcrypt"
+	"net/url"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 const otpChars = "1234567890"
@@ -35,4 +37,12 @@ func GenerateOTP() (string, error) {
 func GetDob(date string) time.Time {
 	dateOfBirth, _ := time.Parse("02/01/2006", date)
 	return dateOfBirth
+}
+
+func IsValidUrl(str string) bool {
+	u, err := url.Parse(str)
+	if err == nil && u.Scheme != "" && u.Host != "" {
+		return true
+	}
+	return false
 }
