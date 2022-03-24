@@ -26,7 +26,6 @@
 }
 ```
 
-
 |     **Key**    | **Type** | **Remarks** |
 |:--------------:|:--------:|:-----------:|
 | `country_code` | `string` | `required`  |
@@ -40,8 +39,13 @@
     "id": "ec13c712-e796-463a-9fe1-c823db96d8ab",
     "phone_number": "23733839347",
     "otp": "$2a$10$HG2Ln6EvaK7BQoC3Kpdppeqhrq0xuXVIiawr8fif.Gvedi7fX4lXS",
-    "created_at": "2022-02-13T10:30:09.9675082+01:00",
-    "otp_created_at": "2022-02-13T10:33:09.9675082+01:00"
+    "raw_otp": "82743",
+    "created_at": "2022-02-13",
+    "otp_created_at": "2022-02-13", 
+    "first_name": "Lee Nover",
+    "dob": "2022-02-13",
+    "location": "",
+    "profile_photo": "https://linktophotos.com/129405"
 },
 "message": "user succesfully created"
 }
@@ -80,40 +84,106 @@
 }
 }
 ```
-# Errors
+## Errors
 
-## 400
+<details>
+<summary> 400 StatusBadRequest </summary>
 
-+ `StatusBadRequest`
 ```
 {
 "message": "failed to parse user request. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD"
 }
 ```
-This error is returned when the service is unable to unmarshal JSON POST requests. Take a look at the ideal JSON POST formats [here](#create-user-account)
+This error is returned when the service is unable to unmarshal JSON requests. Depending on where this error is encountered, take a look at the expected request format of the handler in the docs. [start here](#create-user-account)
 
 ```
 {
 "message": "user already exists, otp sent to user"
 }
 ```
-In `create_account.go`, if a user attempts to create an account with a phone number that already exists in the database, this error is thrown. Make the request with a unique phone number or login instead
+At the `/createAccount` endpoint, if a user attempts to create an account with a phone number that already exists in the database, this error is thrown. To resolve this, make the request with a unique phone number or try to login instead
+```
+{
+"message": "must provide a phone number. fields cannot be left empty"
+}
+```
+This error is returned when the client does not provide a `phone_number` when trying to create an account. To resolve this, provide a valid a `phone_number` and `country_code`
+```
+{
+"message": "must provide an OTP and an ID. fields cannot be left empty"
+}
+```
+This error message is received after a `POST` request is made to the `verifyOTP` endpoint without an `ID` or `OTP`. Make sure these params are provided in the request and make the call again
+</details>
 
-## 500
+<details>
+<summary> 401 StatusUnauthorized </summary>
 
-+ `StatusInternalServerError`
+```
+{
+"message": "otp has expired. generate a new one"
+}
+```
+This error is returned when a user tries to verify an account with an expired `OTP`(OTPs are valid for only 3 minutes). To fix this, try to login again to generate a new `OTP`
+```
+{
+"message": "failed to verify otp"
+}
+```
+When this message occurs, it signals that user access has been restricted because a wrong `OTP` was submitted. Repeat the process with the correct code to fix this
+```
+{
+"message": "failed to generate jwt"
+}
+```
+Service unable to generate jwt
+
+</details>
+
+
+<details>
+<summary> 500 StatusInternalServerError </summary>
+
+```
+{
+"message": "no user found with that phone number"
+}
+```
+Issue while trying to make a query to the database. repeating the process should fix this, contact someone on the team if problem persists
+```
+{
+"message": "failed to create otp"
+}
+```
+Service encountered a problem trying to generate and assign an otp to the user. repeating the process should fix this, contact someone on the team if problem persists
+```
+{
+"message": "failed to hash otp"
+}
+```
+Service unable to hash the user's assigned otp. repeating the process should fix this, contact someone on the team if problem persists
+```
+{
+"message": "failed to update otp for existing user"
+}
+```
+unable to overwrite the user's old verification code. repeating the process should fix this, contact someone on the team if problem persists
+```
+{
+"message": "failed to create user"
+}
+```
+unable to create and store user instance. repeating the process should fix this, contact someone on the team if problem persists
 ```
 {
 "message": "no user found with that id"
 }
 ```
 a 500 error will be thrown when a database query fails, typically when queries to the database return empty. errors related to this will take the format of the reponse above
-
-special 500 errors could be sent on the `verifyOTP` endpoint if SMS service fails. The response takes this format:
-
-+ `StatusInternalServerError`
 ```
 {
 "message": "failed to send OTP using SMS"
 }
 ```
+special 500 errors could be sent on the `verifyOTP` endpoint if SMS service fails. repeating the process should fix this, contact someone on the team if problem persists
+</details>

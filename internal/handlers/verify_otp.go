@@ -41,18 +41,18 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 	}
 
 	if time.Now().After(user.OTPCreatedAt) {
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "otp has expired. regenerate a new one"})
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "otp has expired. generate a new one"})
 		return
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.OTP), []byte(requestData.OTP)); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "failed to verify otp"})
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "failed to verify otp"})
 		return
 	}
 
 	token, err := lib.GenerateJWTToken(*user)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "failed to generate jwt token"})
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "failed to generate jwt"})
 		return
 	}
 
