@@ -4,6 +4,11 @@ import (
 	"time"
 )
 
+type Location struct {
+	Longitude float64 `json:"longitude"`
+	Latitude  float64 `json:"latitude"`
+}
+
 type User struct {
 	ID           string    `json:"id" gorm:"default:gen_random_uuid()"`
 	CountryCode  string    `json:"country_code"`
@@ -15,8 +20,6 @@ type User struct {
 	FirstName    string    `json:"first_name"`
 	DOB          time.Time `json:"dob" sql:"type:timestamp without time zone"`
 	Location     string    `json:"location"`
-	Longitude    float64   `json:"longitude"`
-	Latitude     float64   `json:"latitude"`
 	ProfilePhoto string    `json:"profile_photo"`
 }
 
