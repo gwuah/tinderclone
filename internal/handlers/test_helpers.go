@@ -4,12 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-
+	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
 	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/models"
@@ -80,6 +79,24 @@ func CreateTestUser(t *testing.T) (string, string, *models.User) {
 	}
 
 	return code, string(hashedCode), &testUser
+}
+
+func CreateCheckUser(t *testing.T) *models.User {
+	f := faker.New()
+
+	code, err := lib.GenerateOTP()
+	assert.NoError(t, err)
+
+	hashedCode, err := lib.HashOTP(code)
+	assert.NoError(t, err)
+
+	testUser := models.User{
+		ID:           NewUUID(),
+		PhoneNumber:  f.Numerify("+###########"),
+		OTP:          string(hashedCode),
+		OTPCreatedAt: lib.GenerateOTPExpiryDate(),
+	}
+	return &testUser
 }
 
 func BootstrapServer(req *http.Request, routeHandlers *gin.Engine) *httptest.ResponseRecorder {

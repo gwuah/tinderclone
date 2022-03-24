@@ -14,10 +14,11 @@ type location struct {
 	Latitude  float64 `json:"latitude"`
 }
 type UpdateAccountRequest struct {
-	ID        string   `json:"id" binding:"required"`
-	FirstName string   `json:"first_name" binding:"required"`
-	DOB       string   `json:"dob" binding:"required"`
-	Location  location `json:"location" binding:"required"`
+	ID           string `json:"id" binding:"required"`
+	FirstName    string `json:"first_name" binding:"required"`
+	DOB          string `json:"dob" binding:"required"`
+	Location     location `json:"location" binding:"required"`
+	ProfilePhoto string `json:"profile_photo" binding:"required"`
 }
 
 func (h *Handler) UpdateAccount(c *gin.Context) {
@@ -31,11 +32,16 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		})
 		return
 	}
+	validateUrl := lib.IsValidUrl(u.ProfilePhoto)
+	if !validateUrl {
+		log.Panicln("use a valid image url")
+	}
 
 	user := models.User{
-		ID:        u.ID,
-		DOB:       lib.GetDob(u.DOB),
-		FirstName: u.FirstName,
+		ID:           u.ID,
+		DOB:          lib.GetDob(u.DOB),
+		FirstName:    u.FirstName,
+		ProfilePhoto: u.ProfilePhoto,
 		Longitude: u.Location.Longitude,
 		Latitude:  u.Location.Latitude,
 	}
