@@ -32,9 +32,13 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		})
 		return
 	}
+
 	validateUrl := lib.IsValidUrl(u.ProfilePhoto)
 	if !validateUrl {
-		log.Panicln("use a valid image url")
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "failed to parse user request. provide valid photo url",
+		})
+		return
 	}
 
 	user := models.User{
