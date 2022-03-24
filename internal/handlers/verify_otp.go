@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/lib"
 	"golang.org/x/crypto/bcrypt"
-
 )
 
 type VerifyOTPRequest struct {
@@ -19,7 +18,8 @@ type VerifyOTPRequest struct {
 func (h *Handler) VerifyOTP(c *gin.Context) {
 	var requestData VerifyOTPRequest
 
-	err := c.BindJSON(&requestData); if err != nil {
+	err := c.BindJSON(&requestData)
+	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "failed to parse user request. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",

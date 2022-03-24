@@ -1,12 +1,11 @@
 package handlers_test
 
 import (
-	"encoding/json"
 	"log"
-	"net/http"
 	"os"
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/config"
 	"github.com/gwuah/tinderclone/internal/handlers"
 	"github.com/gwuah/tinderclone/internal/lib"
@@ -17,6 +16,8 @@ import (
 	"github.com/jaswdr/faker"
 	"github.com/stretchr/testify/assert"
 )
+
+var routeHandlers *gin.Engine
 
 func TestMain(m *testing.M) {
 	err := config.LoadTestConfig("../../.env.test")
@@ -37,30 +38,20 @@ func TestMain(m *testing.M) {
 	repo := repository.New(db)
 	handler := handlers.New(repo, sms, q)
 	srv := server.New(handler)
-
-	// defer srv.Stop()
-	go srv.Start()
-
+	routeHandlers = srv.SetupRoutes()
 	os.Exit(m.Run())
 }
 
 func TestCreateAccountEndpoint(t *testing.T) {
 	f := faker.New()
 
-	req := map[string]interface{}{
+	req := handlers.MakeTestRequest(t, "/createAccount", map[string]interface{}{
 		"phone_number": f.Numerify("+##############"),
-	}
+	})
 
-	resp, err := handlers.MakeRequest("createAccount", os.Getenv("PORT"), req)
-	assert.NoError(t, err)
+	response := handlers.BootstrapServer(req, routeHandlers)
+	responseBody := handlers.DecodeResponse(t, response)
 
-	assert.Equal(t, http.StatusCreated, resp.StatusCode)
-
-	var m map[string]interface{}
-	assert.NoError(t, json.NewDecoder(resp.Body).Decode(&m))
-
-	defer resp.Body.Close()
-
-	assert.Equal(t, "user succesfully created", m["message"])
+	assert.Equal(t, "user successfully created", responseBody["message"])
 
 }

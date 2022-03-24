@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 
 	"github.com/gofrs/uuid"
@@ -78,4 +80,26 @@ func CreateTestUser(t *testing.T) (string, string, *models.User) {
 	}
 
 	return code, string(hashedCode), &testUser
+}
+
+func BootstrapServer(req *http.Request, routeHandlers *gin.Engine) *httptest.ResponseRecorder {
+	responseRecorder := httptest.NewRecorder()
+	routeHandlers.ServeHTTP(responseRecorder, req)
+	return responseRecorder
+}
+
+func MakeTestRequest(t *testing.T, route string, body interface{}) *http.Request {
+	reqBody, err := json.Marshal(body)
+	assert.NoError(t, err)
+
+	req, err := http.NewRequest("POST", route, bytes.NewReader(reqBody))
+	assert.NoError(t, err)
+
+	return req
+}
+
+func DecodeResponse(t *testing.T, response *httptest.ResponseRecorder) map[string]interface{} {
+	var responseBody map[string]interface{}
+	assert.NoError(t, json.Unmarshal(response.Body.Bytes(), &responseBody))
+	return responseBody
 }

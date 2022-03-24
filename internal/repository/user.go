@@ -23,7 +23,7 @@ func (u *UserRepo) FindUserByPhone(phone string) (*models.User, int64, error) {
 }
 
 func (u *UserRepo) CreateUser(user *models.User) error {
-	return u.db.Create(&user).Error
+	return u.db.Omit("Location").Create(&user).Error
 }
 
 func (u *UserRepo) FindUserByID(id string) (*models.User, error) {
@@ -36,5 +36,9 @@ func (u *UserRepo) FindUserByID(id string) (*models.User, error) {
 }
 
 func (u *UserRepo) UpdateUserByID(user *models.User) error {
+	db := u.db.Exec("UPDATE users SET location = ST_SetSRID(ST_MakePoint(? , ?), 4326) where id = ?", user.Longitude, user.Latitude, user.ID)
+	if db.Error != nil {
+		return db.Error
+	}
 	return u.db.Model(models.User{}).Where("id = ?", user.ID).Updates(&user).Error
 }

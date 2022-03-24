@@ -9,17 +9,20 @@ import (
 	"github.com/gwuah/tinderclone/internal/models"
 )
 
+type location struct {
+	Longitude float64 `json:"longitude"`
+	Latitude  float64 `json:"latitude"`
+}
 type UpdateAccountRequest struct {
-	ID        string `json:"id" binding:"required"`
-	FirstName string `json:"first_name" binding:"required"`
-	DOB       string `json:"dob" binding:"required"`
-	Location  string `json:"location" binding:"required"`
+	ID        string   `json:"id" binding:"required"`
+	FirstName string   `json:"first_name" binding:"required"`
+	DOB       string   `json:"dob" binding:"required"`
+	Location  location `json:"location" binding:"required"`
 }
 
 func (h *Handler) UpdateAccount(c *gin.Context) {
 
 	var u UpdateAccountRequest
-
 
 	if err := c.BindJSON(&u); err != nil {
 		log.Println(err)
@@ -30,11 +33,11 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 	}
 
 	user := models.User{
-
 		ID:        u.ID,
 		DOB:       lib.GetDob(u.DOB),
-		Location:  u.Location,
 		FirstName: u.FirstName,
+		Longitude: u.Location.Longitude,
+		Latitude:  u.Location.Latitude,
 	}
 
 	err := h.repo.UserRepo.UpdateUserByID(&user)
