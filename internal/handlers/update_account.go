@@ -38,20 +38,20 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 	}
 
 	user := models.User{
-		ID:           u.ID,
-		DOB:          lib.GetDob(u.DOB),
-		FirstName:    u.FirstName,
-		ProfilePhoto: u.ProfilePhoto,
+		ID:        u.ID,
+		DOB:       lib.GetDob(u.DOB),
+		FirstName: u.FirstName,
 	}
 
 	err := h.repo.UserRepo.UpdateLocation(u.ID, u.Location)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "failed to update user",
+			"message": "failed to update user location",
 		})
 		return
 	}
+
 
 	err = h.repo.UserRepo.UpdateUserByID(&user)
 	if err != nil {

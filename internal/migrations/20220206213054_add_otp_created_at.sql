@@ -1,5 +1,7 @@
 -- +goose Up
-alter table users add otp_created_at TIMESTAMP;
+ALTER TABLE users 
+    ADD otp_created_at TIMESTAMP;
 
 -- +goose Down
-alter table users drop otp_created_at;
+ALTER TABLE users 
+    DROP otp_created_at;

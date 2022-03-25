@@ -4,7 +4,7 @@ CREATE EXTENSION postgis;
 ALTER TABLE users
     ADD first_name  VARCHAR,
     ADD dob         DATE,
-    ADD location    geography(point);
+    ADD location    GEOGRAPHY(POINT);
 
 CREATE INDEX users_location ON users USING GIST (location);
 
@@ -16,4 +16,4 @@ ALTER TABLE users
 
 DROP INDEX users_location;
 
-DROP EXTENSION IF EXISTS postgis cascade;
+DROP EXTENSION IF EXISTS postgis CASCADE;

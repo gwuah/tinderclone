@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/gwuah/tinderclone/internal/models"
 	"gorm.io/gorm"
 )
@@ -40,12 +42,11 @@ func (u *UserRepo) UpdateUserByID(user *models.User) error {
 }
 
 func (u *UserRepo) UpdateLocation(id string, loc models.Location) error {
-	return u.db.Exec(`
-		UPDATE users 
-		SET location = POINT(?, ?) 
-		WHERE id = ?`,
+	return u.db.Exec(fmt.Sprintf(`UPDATE users
+	SET location = 'POINT(%.8f %.8f)'
+	WHERE id = ?`,
 		loc.Longitude,
-		loc.Latitude,
+		loc.Latitude),
 		id,
 	).Error
 }

@@ -8,10 +8,9 @@ This clone mirrors Tinder's geosocial networking application. It allows users an
 - Clone `.env.local` into a `.env` file
     - Replace the variables accordingly to match your system
 - Setup `goose` and run migrations in `internal/migrations` on database
-    - `python build.py *command` with command as a placeholder for goose commands up, down, status, etc.
-    - Replace the variables accordingly to match your system
+    - `python3 build.py *command` with `command` as a placeholder for goose commands up, down, status, etc.
+    - `python3 build.py c *name` with `name` as a placeholder for migration file name to create a new migration file in `./internal/migrations`
 - Run `go run cmd/main.go` in your terminal
-
 
 # Tests
 

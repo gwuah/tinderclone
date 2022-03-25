@@ -4,10 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"log"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
 	"github.com/gwuah/tinderclone/internal/lib"
@@ -16,6 +12,10 @@ import (
 	"github.com/jaswdr/faker"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
+	"log"
+	"net/http"
+	"net/http/httptest"
+	"testing"
 )
 
 var dbConnPool *gorm.DB
