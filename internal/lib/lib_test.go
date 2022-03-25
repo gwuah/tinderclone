@@ -3,8 +3,6 @@ package lib
 import (
 	//"os"
 	"testing"
-
-	"github.com/jaswdr/faker"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,10 +20,3 @@ func TestGenerateOTP(t *testing.T) {
 
 // 	assert.NoError(t, err)
 // }
-
-func TestIsValidUrl(t *testing.T) {
-	f := faker.New()
-
-	valid := IsValidUrl(f.Internet().URL())
-	assert.True(t, valid)
-}

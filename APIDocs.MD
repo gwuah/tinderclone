@@ -89,13 +89,12 @@
 + `JSON body:`
 ```
 {
-{
 "id": "2fe743f9-9d1d-45ce-bb4f-cb253e248099",
 "first_name": "kwaku",
 "dob" : "26/04/2000",
 "location": {"longitude":164.7541232424 , "latitude":-77.508333},
 }
-}
+
 ```
 
 |     **Key**    | **Type** | **Remarks** |

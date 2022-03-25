@@ -14,7 +14,6 @@ type UpdateAccountRequest struct {
 	FirstName    string          `json:"first_name" binding:"required"`
 	DOB          string          `json:"dob" binding:"required"`
 	Location     models.Location `json:"location" binding:"required"`
-	ProfilePhoto string          `json:"profile_photo" binding:"required"`
 }
 
 func (h *Handler) UpdateAccount(c *gin.Context) {
@@ -28,15 +27,7 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		})
 		return
 	}
-
-	validateUrl := lib.IsValidUrl(u.ProfilePhoto)
-	if !validateUrl {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "failed to parse user request. provide valid photo url",
-		})
-		return
-	}
-
+	
 	user := models.User{
 		ID:        u.ID,
 		DOB:       lib.GetDob(u.DOB),
