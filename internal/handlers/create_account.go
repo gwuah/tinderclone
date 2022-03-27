@@ -64,8 +64,8 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 	newUser.RawOTP = code
 
 	if rowsAffected > 0 {
-		existingUser.RawOTP = code
 		existingUser.OTP = string(hashedCode)
+		existingUser.RawOTP = code
 		existingUser.OTPCreatedAt = lib.GenerateOTPExpiryDate()
 		err := h.repo.UserRepo.UpdateUserByID(existingUser)
 		if err != nil {
