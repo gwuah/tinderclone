@@ -44,7 +44,7 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 	}
 
 
-	err = h.repo.UserRepo.UpdateUserByID(&user)
+	err = h.repo.UserRepo.UpdateUserByID(user.ID, &user)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
