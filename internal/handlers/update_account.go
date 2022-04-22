@@ -34,7 +34,7 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		FirstName: u.FirstName,
 	}
 
-	err := h.repo.UserRepo.UpdateLocation(u.ID, u.Location)
+	err := h.repo.UserRepo.UpdateLocationByID(u.ID, u.Location)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
