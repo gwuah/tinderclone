@@ -64,10 +64,10 @@ func (h *Handler) CreateAccount(c *gin.Context) {
 	newUser.RawOTP = code
 
 	if rowsAffected > 0 {
-		existingUser.RawOTP = code
 		existingUser.OTP = string(hashedCode)
+		existingUser.RawOTP = code
 		existingUser.OTPCreatedAt = lib.GenerateOTPExpiryDate()
-		err := h.repo.UserRepo.Update(existingUser)
+		err := h.repo.UserRepo.UpdateUserByID(existingUser.ID, existingUser)
 		if err != nil {
 			log.Println(err)
 			c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to update otp for existing user"})

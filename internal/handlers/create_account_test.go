@@ -1,9 +1,9 @@
 package handlers_test
 
 import (
-	"testing"
 	"log"
 	"os"
+	"testing"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/config"
@@ -55,4 +55,3 @@ func TestCreateAccountEndpoint(t *testing.T) {
 	assert.Equal(t, "user successfully created", responseBody["message"])
 
 }
-

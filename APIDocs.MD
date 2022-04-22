@@ -3,7 +3,7 @@
 ##  Health check
 
 **Request**
-
+`   
 + `GET /healthCheck`
 
 **Response**
@@ -80,6 +80,49 @@
 }
 }
 ```
+**Request**
+
++ `POST /updateAccount`
+
++ `Content-type:` application/json
+
++ `JSON body:`
+```
+{
+"id": "2fe743f9-9d1d-45ce-bb4f-cb253e248099",
+"first_name": "kwaku",
+"dob" : "26/04/2000",
+"location": {"longitude":164.7541232424 , "latitude":-77.508333},
+}
+
+```
+
+|     **Key**    | **Type** | **Remarks** |
+|:--------------:|:--------:|:-----------:|
+| `id` | `uuid` | required  |
+| `first_name` | `string` | required  |
+| `dob` | `string` | required  |
+| `location` | `json object` | required  |
+
+
+**Sample Response**
+```
+{
+"data": {
+"id": "2fe743f9-9d1d-45ce-bb4f-cb253e248099",
+"country_code": "",
+"phone_number": "",
+"otp": "",
+"raw_otp": "",
+"created_at": "0001-01-01T00:00:00Z",
+"otp_created_at": "0001-01-01T00:00:00Z",
+"first_name": "kwaku",
+"dob": "2000-04-26T00:00:00Z",
+"location": ""
+},
+"message": "user successfully updated"
+}
+```
 # Errors
 
 ## 400
@@ -97,7 +140,7 @@ This error is returned when the service is unable to unmarshal JSON POST request
 "message": "user already exists, otp sent to user"
 }
 ```
-In `create_account.go`, if a user attempts to create an account with a phone number that already exists in the database, this error is thrown. Make the request with a unique phone number or login instead
+On the `create_account/` endpoint, if a user attempts to create an account with a phone number that already exists in the database, this error is thrown. Make the request with a unique phone number or login instead
 
 ## 500
 
@@ -109,11 +152,27 @@ In `create_account.go`, if a user attempts to create an account with a phone num
 ```
 a 500 error will be thrown when a database query fails, typically when queries to the database return empty. errors related to this will take the format of the reponse above
 
-special 500 errors could be sent on the `verifyOTP` endpoint if SMS service fails. The response takes this format:
+special 500 errors could be sent on the `verifyOTP/` endpoint if SMS service fails. The response takes this format:
 
 + `StatusInternalServerError`
 ```
 {
 "message": "failed to send OTP using SMS"
+}
+```
+
+a 500 will be thrown if user update fails on an `updateAccount/`. The response takes this format:
++ `StatusInternalServerError`
+```
+{
+"message": "failed to update user"
+}
+```
+
+a 500 will be thrown if user location update fails. The response takes this format:
++ `StatusInternalServerError`
+```
+{
+"message": "failed to update user location"
 }
 ```

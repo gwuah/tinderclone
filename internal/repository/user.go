@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/gwuah/tinderclone/internal/models"
 	"gorm.io/gorm"
 )
@@ -23,7 +25,7 @@ func (u *UserRepo) FindUserByPhone(phone string) (*models.User, int64, error) {
 }
 
 func (u *UserRepo) CreateUser(user *models.User) error {
-	return u.db.Create(&user).Error
+	return u.db.Omit("Location").Create(&user).Error
 }
 
 func (u *UserRepo) FindUserByID(id string) (*models.User, error) {
@@ -35,6 +37,16 @@ func (u *UserRepo) FindUserByID(id string) (*models.User, error) {
 	return &user, db.Error
 }
 
-func (u *UserRepo) Update(user *models.User) error {
-	return u.db.Model(models.User{}).Where("id = ?", user.ID).Updates(&user).Error
+func (u *UserRepo) UpdateUserByID(id string, user *models.User) error {
+	return u.db.Model(models.User{}).Where("id = ?", id).Updates(&user).Error
+}
+
+func (u *UserRepo) UpdateLocationByID(id string, loc models.Location) error {
+	return u.db.Exec(fmt.Sprintf(`UPDATE users
+	SET location = 'POINT(%.8f %.8f)'
+	WHERE id = ?`,
+		loc.Longitude,
+		loc.Latitude),
+		id,
+	).Error
 }

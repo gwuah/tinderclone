@@ -3,7 +3,6 @@ package lib
 import (
 	//"os"
 	"testing"
-
 	"github.com/stretchr/testify/assert"
 )
 

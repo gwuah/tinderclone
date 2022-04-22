@@ -4,12 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"testing"
-	"net/http/httptest"
-	"log"
 	"github.com/gin-gonic/gin"
-
 	"github.com/gofrs/uuid"
 	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/models"
@@ -17,6 +12,10 @@ import (
 	"github.com/jaswdr/faker"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
+	"log"
+	"net/http"
+	"net/http/httptest"
+	"testing"
 )
 
 var dbConnPool *gorm.DB
@@ -81,7 +80,6 @@ func CreateTestUser(t *testing.T) (string, string, *models.User) {
 
 	return code, string(hashedCode), &testUser
 }
-
 
 func BootstrapServer(req *http.Request, routeHandlers *gin.Engine) *httptest.ResponseRecorder {
 	responseRecorder := httptest.NewRecorder()
