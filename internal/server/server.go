@@ -31,13 +31,21 @@ func (s *Server) SetupMiddlewares(m []gin.HandlerFunc) {
 
 //TODO: Set up route groups when we have authenticated routes and pass JWT middleware to authenticated routes
 func (s *Server) SetupRoutes() *gin.Engine {
-	middlewares := []gin.HandlerFunc{middlewares.Cors()}
-	s.SetupMiddlewares(middlewares)
+	mw := []gin.HandlerFunc{middlewares.Cors()}
+	s.SetupMiddlewares(mw)
 
 	s.e.GET("/healthCheck", s.h.HealthCheck)
 	s.e.POST("/createAccount", s.h.CreateAccount)
 	s.e.POST("/verifyOTP", s.h.VerifyOTP)
-	s.e.POST("/updateAccount", s.h.UpdateAccount)
+	s.e.POST("/updateAccount", middlewares.AuthorizeJWT(), s.h.UpdateAccount)
+
+	authenticatedRoute := s.e.Group("/auth").Use(middlewares.AuthorizeJWT())
+	{
+		authenticatedRoute.POST("/updateAccount", s.h.UpdateAccount)
+	}
+
+	// tinderclone.herokuapp.com/auth/updateAccount
+
 	return s.e
 }
 
