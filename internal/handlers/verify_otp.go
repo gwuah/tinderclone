@@ -50,10 +50,20 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 		return
 	}
 
-	token, err := lib.GenerateJWTToken(*user)
+	token, expiresAt, err := lib.GenerateJWTToken(*user)
 	if err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"message": "failed to generate jwt token"})
 		return
+	}
+
+	if _, err := c.Request.Cookie("token"); err == nil {
+		// extend time?
+	} else {
+		http.SetCookie(c.Writer, &http.Cookie{
+			Name:    "token",
+			Value:   token,
+			Expires: expiresAt,
+		})
 	}
 
 	c.JSON(http.StatusOK, gin.H{

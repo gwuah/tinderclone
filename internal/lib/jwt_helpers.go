@@ -11,27 +11,29 @@ import (
 )
 
 type JWTAuthDetails struct {
+	UserID string
 	jwt.StandardClaims
 }
 
-func GenerateJWTToken(user models.User) (string, error) {
-	expiresAt := time.Now().Add(time.Hour * 24 * 7).Unix()
+func GenerateJWTToken(user models.User) (string, time.Time, error) {
+	expiresAt := time.Now().Add(time.Hour * 24 * 7)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, JWTAuthDetails{
+		UserID: user.ID,
 		StandardClaims: jwt.StandardClaims{
 			Subject:   user.PhoneNumber,
-			ExpiresAt: expiresAt,
+			ExpiresAt: expiresAt.Unix(),
 		},
 	})
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWTOKENKEY")))
 	if err != nil {
 		log.Println(err)
-		return "", err
+		return "", time.Date(0001, 1, 1, 00, 00, 00, 00, time.UTC), err
 	}
-	return tokenString, nil
+	return tokenString, expiresAt, nil
 }
 
-func VerifyAccessToken(tokenString string) (*jwt.Token, error) {
+func VerifyJWT(tokenString string) (*jwt.Token, JWTAuthDetails, error) {
 	var claims JWTAuthDetails
 	token, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -40,5 +42,5 @@ func VerifyAccessToken(tokenString string) (*jwt.Token, error) {
 		return []byte(os.Getenv("JWTOKENKEY")), nil
 	})
 
-	return token, err
+	return token, claims, err
 }

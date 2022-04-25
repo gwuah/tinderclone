@@ -1,0 +1,71 @@
+package handlers
+
+import (
+	"log"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
+
+type Scores struct {
+	FirstName    int `json:"firstname"`
+	LastName     int `json:"lastname"`
+	Location     int `json:"location"`
+	Bio          int `json:"bio"`
+	Gender       int `json:"gender"`
+	DOB          int `json:"dob"`
+	Interests    int `json:"interests"`
+	ProfilePhoto int `json:"profile_photo"`
+}
+
+func (h *Handler) RetrieveUser(c *gin.Context) {
+	var score Scores
+
+	authorizedUserID, ok := c.Get("user_id")
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to pass authentication details along. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
+		})
+	}
+
+	if c.Param("id") != authorizedUserID {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "not authorized to view this information. user_id from request and user_id from jwt do not match. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
+		})
+	}
+
+	user, err := h.repo.UserRepo.FindUserByID(c.Param("id"))
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "no user found with that id"})
+		return
+	}
+
+	if user.FirstName != "" {
+		score.FirstName = 5
+	}
+	if user.LastName != "" {
+		score.LastName = 5
+	}
+	if user.Location != "" {
+		score.Location = 15
+	}
+	if user.Bio != "" {
+		score.Bio = 5
+	}
+	if user.Gender != "" {
+		score.Gender = 20
+	}
+	if !user.DOB.IsZero() {
+		score.DOB = 15
+	}
+	if user.Interests[0] != "" {
+		score.Interests = 10
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "user succesfully retrieved",
+		"user":    user,
+		"score":   score,
+	})
+}
