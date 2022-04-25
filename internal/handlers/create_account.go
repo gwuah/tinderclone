@@ -4,6 +4,7 @@ import (
 	//"fmt"
 	"log"
 	"net/http"
+
 	//"strings"
 
 	"github.com/gin-gonic/gin"
@@ -14,6 +15,19 @@ import (
 
 func (h *Handler) CreateAccount(c *gin.Context) {
 	var newUser models.User
+
+	authorizedUserID, ok := c.Get("user_id")
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to pass authentication details along",
+		})
+	}
+
+	if c.Param("id") != authorizedUserID {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"message": "failed to parse user request. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
+		})
+	}
 
 	err := c.BindJSON(&newUser)
 	if err != nil {

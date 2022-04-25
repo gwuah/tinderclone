@@ -11,12 +11,14 @@ import (
 )
 
 type JWTAuthDetails struct {
+	UserID string
 	jwt.StandardClaims
 }
 
 func GenerateJWTToken(user models.User) (string, error) {
 	expiresAt := time.Now().Add(time.Hour * 24 * 7).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, JWTAuthDetails{
+		UserID: user.ID,
 		StandardClaims: jwt.StandardClaims{
 			Subject:   user.PhoneNumber,
 			ExpiresAt: expiresAt,
@@ -31,7 +33,7 @@ func GenerateJWTToken(user models.User) (string, error) {
 	return tokenString, nil
 }
 
-func VerifyAccessToken(tokenString string) (*jwt.Token, error) {
+func VerifyAccessToken(tokenString string) (*jwt.Token, JWTAuthDetails, error) {
 	var claims JWTAuthDetails
 	token, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -40,5 +42,5 @@ func VerifyAccessToken(tokenString string) (*jwt.Token, error) {
 		return []byte(os.Getenv("JWTOKENKEY")), nil
 	})
 
-	return token, err
+	return token, claims, err
 }
