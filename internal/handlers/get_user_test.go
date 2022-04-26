@@ -9,32 +9,61 @@ import (
 )
 
 func TestGetUser200(t *testing.T) {
-	// TODO: happy test case. jwt and user id in path match
 	code, _, user := handlers.CreateTestUser(t)
 	handlers.SeedDB(&user)
 
-	// req1 := handlers.MakeTestRequest(t, "/verifyOTP", map[string]interface{}{
-	// 	"id":  user.ID,
-	// 	"otp": code,
-	// })
+	verifyUser := handlers.MakeTestRequest(t, "/verifyOTP", map[string]interface{}{
+		"id":  user.ID,
+		"otp": code,
+	}, nil)
 
-	// response := handlers.BootstrapServer(req1, routeHandlers)
-	// responseBody := handlers.DecodeResponse(t, response)
-	token := responseBody["token"]
-	// assert.NoError(t, "otp code verified", responseBody["message"])
+	verifyResponse := handlers.BootstrapServer(verifyUser, routeHandlers)
+	verifyResponseBody := handlers.DecodeResponse(t, verifyResponse)
+	token := verifyResponseBody["token"]
 
-	req := handlers.MakeTestRequest(t, fmt.Sprintf("/retrieveUser/:%s", user.ID), map[string]interface{}{
-		"token": token,
-	})
-	response = handlers.BootstrapServer(req, routeHandlers)
-	responseBody = handlers.DecodeResponse(t, response)
+	getUserRequest := handlers.MakeTestRequest(t, fmt.Sprintf("/getUser/%s", user.ID), map[string]interface{}{}, &token)
+
+	getUserResponse := handlers.BootstrapServer(getUserRequest, routeHandlers)
+	responseBody := handlers.DecodeResponse(t, getUserResponse)
 	assert.Equal(t, "user succesfully retrieved", responseBody["message"])
 }
 
 func TestRetrieveUser400(t *testing.T) {
-	// TODO: unhappy test case. wrong id
+	code, _, user := handlers.CreateTestUser(t)
+	handlers.SeedDB(&user)
+
+	verifyUser := handlers.MakeTestRequest(t, "/verifyOTP", map[string]interface{}{
+		"id":  user.ID,
+		"otp": code,
+	}, nil)
+
+	verifyResponse := handlers.BootstrapServer(verifyUser, routeHandlers)
+	verifyResponseBody := handlers.DecodeResponse(t, verifyResponse)
+	token := verifyResponseBody["token"]
+
+	getUserRequest := handlers.MakeTestRequest(t, fmt.Sprintf("/getUser/%s", "wronguser.ID"), map[string]interface{}{}, &token)
+
+	getUserResponse := handlers.BootstrapServer(getUserRequest, routeHandlers)
+	responseBody := handlers.DecodeResponse(t, getUserResponse)
+	assert.Equal(t, "not authorized", responseBody["message"])
 }
 
 func TestRetrieveUser400NoID(t *testing.T) {
-	// TODO: No id passed.
+	code, _, user := handlers.CreateTestUser(t)
+	handlers.SeedDB(&user)
+
+	verifyUser := handlers.MakeTestRequest(t, "/verifyOTP", map[string]interface{}{
+		"id":  user.ID,
+		"otp": code,
+	}, nil)
+
+	verifyResponse := handlers.BootstrapServer(verifyUser, routeHandlers)
+	verifyResponseBody := handlers.DecodeResponse(t, verifyResponse)
+	token := verifyResponseBody["token"]
+
+	getUserRequest := handlers.MakeTestRequest(t, fmt.Sprintf("/getUser/%s", ""), map[string]interface{}{}, &token)
+
+	getUserResponse := handlers.BootstrapServer(getUserRequest, routeHandlers)
+	responseBody := handlers.DecodeResponse(t, getUserResponse)
+	assert.Equal(t, "not authorized", responseBody["message"])
 }

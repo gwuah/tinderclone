@@ -4,6 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
 	"github.com/gwuah/tinderclone/internal/lib"
@@ -12,10 +17,6 @@ import (
 	"github.com/jaswdr/faker"
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm"
-	"log"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 var dbConnPool *gorm.DB
@@ -87,11 +88,15 @@ func BootstrapServer(req *http.Request, routeHandlers *gin.Engine) *httptest.Res
 	return responseRecorder
 }
 
-func MakeTestRequest(t *testing.T, route string, body interface{}) *http.Request {
+func MakeTestRequest(t *testing.T, route string, body interface{}, token *interface{}) *http.Request {
 	reqBody, err := json.Marshal(body)
 	assert.NoError(t, err)
 
 	req, err := http.NewRequest("POST", route, bytes.NewReader(reqBody))
+	if token != nil {
+		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", *token))
+	}
+
 	assert.NoError(t, err)
 
 	return req

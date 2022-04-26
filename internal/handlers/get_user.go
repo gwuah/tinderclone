@@ -5,21 +5,11 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gwuah/tinderclone/internal/models"
 )
 
-type Scores struct {
-	FirstName    int `json:"firstname" gorm:"-"`
-	LastName     int `json:"lastname" gorm:"-"`
-	Location     int `json:"location" gorm:"-"`
-	Bio          int `json:"bio" gorm:"-"`
-	Gender       int `json:"gender" gorm:"-"`
-	DOB          int `json:"dob" gorm:"-"`
-	Interests    int `json:"interests" gorm:"-"`
-	ProfilePhoto int `json:"profile_photo" gorm:"-"`
-}
-
 func (h *Handler) GetUser(c *gin.Context) {
-	var score Scores
+	var score models.Scores
 
 	authorizedUserID, ok := c.Get("user_id")
 	if !ok {
@@ -30,7 +20,7 @@ func (h *Handler) GetUser(c *gin.Context) {
 
 	if c.Param("id") != authorizedUserID {
 		c.JSON(http.StatusUnauthorized, gin.H{
-			"message": "not authorized. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
+			"message": "not authorized",
 		})
 	}
 
@@ -66,6 +56,5 @@ func (h *Handler) GetUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "user succesfully retrieved",
 		"user":    user,
-		"score":   score,
 	})
 }

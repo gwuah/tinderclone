@@ -16,7 +16,7 @@ func TestVerifyOTPEndpoint200(t *testing.T) {
 	req := handlers.MakeTestRequest(t, "/verifyOTP", map[string]interface{}{
 		"id":  user.ID,
 		"otp": code,
-	})
+	}, nil)
 
 	response := handlers.BootstrapServer(req, routeHandlers)
 	responseBody := handlers.DecodeResponse(t, response)
@@ -32,7 +32,7 @@ func TestVerifyOTPEndpoint400(t *testing.T) {
 	req := handlers.MakeTestRequest(t, "/verifyOTP", map[string]interface{}{
 		"id":  user.ID,
 		"otp": f.Numerify("#####"),
-	})
+	}, nil)
 
 	response := handlers.BootstrapServer(req, routeHandlers)
 	responseBody := handlers.DecodeResponse(t, response)
@@ -47,7 +47,7 @@ func TestVerifyOTPEndpoint400NoOTP(t *testing.T) {
 	req := handlers.MakeTestRequest(t, "/verifyOTP", map[string]interface{}{
 		"id":  user.ID,
 		"otp": otp,
-	})
+	}, nil)
 
 	response := handlers.BootstrapServer(req, routeHandlers)
 	responseBody := handlers.DecodeResponse(t, response)
@@ -62,7 +62,7 @@ func TestVerifyOTPEndpoint400ExpiredOTP(t *testing.T) {
 	req := handlers.MakeTestRequest(t, "/verifyOTP", map[string]interface{}{
 		"id":  user.ID,
 		"otp": code,
-	})
+	}, nil)
 
 	response := handlers.BootstrapServer(req, routeHandlers)
 	responseBody := handlers.DecodeResponse(t, response)
