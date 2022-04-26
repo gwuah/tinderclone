@@ -8,14 +8,14 @@ import (
 )
 
 type Scores struct {
-	FirstName    int `json:"firstname"`
-	LastName     int `json:"lastname"`
-	Location     int `json:"location"`
-	Bio          int `json:"bio"`
-	Gender       int `json:"gender"`
-	DOB          int `json:"dob"`
-	Interests    int `json:"interests"`
-	ProfilePhoto int `json:"profile_photo"`
+	FirstName    int `json:"firstname" gorm:"-"`
+	LastName     int `json:"lastname" gorm:"-"`
+	Location     int `json:"location" gorm:"-"`
+	Bio          int `json:"bio" gorm:"-"`
+	Gender       int `json:"gender" gorm:"-"`
+	DOB          int `json:"dob" gorm:"-"`
+	Interests    int `json:"interests" gorm:"-"`
+	ProfilePhoto int `json:"profile_photo" gorm:"-"`
 }
 
 func (h *Handler) RetrieveUser(c *gin.Context) {
@@ -44,24 +44,24 @@ func (h *Handler) RetrieveUser(c *gin.Context) {
 	if user.FirstName != "" {
 		score.FirstName = 5
 	}
-	if user.LastName != "" {
-		score.LastName = 5
-	}
-	if user.Location != "" {
-		score.Location = 15
-	}
-	if user.Bio != "" {
-		score.Bio = 5
-	}
-	if user.Gender != "" {
-		score.Gender = 20
-	}
+	// if user.LastName != "" {
+	// 	score.LastName = 5
+	// }
+	// if user.Location != "" {
+	// 	score.Location = 15
+	// }
+	// if user.Bio != "" {
+	// 	score.Bio = 5
+	// }
+	// if user.Gender != "" {
+	// 	score.Gender = 20
+	// }
 	if !user.DOB.IsZero() {
 		score.DOB = 15
 	}
-	if user.Interests[0] != "" {
-		score.Interests = 10
-	}
+	// if user.Interests[0] != "" {
+	// 	score.Interests = 10
+	// }
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "user succesfully retrieved",

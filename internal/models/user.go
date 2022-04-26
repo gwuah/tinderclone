@@ -18,12 +18,7 @@ type User struct {
 	CreatedAt    time.Time `json:"created_at" sql:"type:timestamp without time zone" `
 	OTPCreatedAt time.Time `json:"otp_created_at" sql:"type:timestamp without time zone" `
 	FirstName    string    `json:"first_name"`
-	LastName     string    `json:"last_name"`
-	Bio          string    `json:"bio"`
 	DOB          time.Time `json:"dob" sql:"type:timestamp without time zone"`
-	Location     string    `json:"location"`
-	Gender       string    `json:"gender"`
-	Interests    []string  `json:"interests"`
 }
 
 func (u *User) Sanitize() {
