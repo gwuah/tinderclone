@@ -15,22 +15,22 @@ type JWTAuthDetails struct {
 	jwt.StandardClaims
 }
 
-func GenerateJWTToken(user models.User) (string, time.Time, error) {
-	expiresAt := time.Now().Add(time.Hour * 24 * 7)
+func GenerateJWTToken(user models.User) (string, error) {
+	expiresAt := time.Now().Add(time.Hour * 24 * 7).Unix()
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, JWTAuthDetails{
 		UserID: user.ID,
 		StandardClaims: jwt.StandardClaims{
 			Subject:   user.PhoneNumber,
-			ExpiresAt: expiresAt.Unix(),
+			ExpiresAt: expiresAt,
 		},
 	})
 
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWTOKENKEY")))
 	if err != nil {
 		log.Println(err)
-		return "", time.Date(0001, 1, 1, 00, 00, 00, 00, time.UTC), err
+		return "", err
 	}
-	return tokenString, expiresAt, nil
+	return tokenString, nil
 }
 
 func VerifyJWT(tokenString string) (*jwt.Token, JWTAuthDetails, error) {

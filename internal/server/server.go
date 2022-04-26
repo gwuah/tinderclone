@@ -39,10 +39,10 @@ func (s *Server) SetupRoutes() *gin.Engine {
 	s.e.POST("/verifyOTP", s.h.VerifyOTP)
 	s.e.POST("/updateAccount", s.h.UpdateAccount)
 
-	authenticatedRoute := s.e.Group("/auth").Use(middlewares.AuthorizeJWT())
+	authenticatedRoutes := s.e.Group("/auth").Use(middlewares.AuthorizeJWT())
 	{
-		authenticatedRoute.POST("/updateAccount", s.h.UpdateAccount)
-		authenticatedRoute.GET("/retrieveUser/:id", s.h.RetrieveUser)
+		authenticatedRoutes.POST("/updateAccount", s.h.UpdateAccount)
+		authenticatedRoutes.GET("/getUser/:id", s.h.GetUser)
 	}
 	return s.e
 }

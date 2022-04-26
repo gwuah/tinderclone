@@ -18,19 +18,19 @@ type Scores struct {
 	ProfilePhoto int `json:"profile_photo" gorm:"-"`
 }
 
-func (h *Handler) RetrieveUser(c *gin.Context) {
+func (h *Handler) GetUser(c *gin.Context) {
 	var score Scores
 
 	authorizedUserID, ok := c.Get("user_id")
 	if !ok {
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "failed to pass authentication details along. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
+			"message": "request failed. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
 		})
 	}
 
 	if c.Param("id") != authorizedUserID {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "not authorized to view this information. user_id from request and user_id from jwt do not match. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": "not authorized. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
 		})
 	}
 
@@ -44,6 +44,9 @@ func (h *Handler) RetrieveUser(c *gin.Context) {
 	if user.FirstName != "" {
 		score.FirstName = 5
 	}
+	if !user.DOB.IsZero() {
+		score.DOB = 15
+	}
 	// if user.LastName != "" {
 	// 	score.LastName = 5
 	// }
@@ -56,9 +59,6 @@ func (h *Handler) RetrieveUser(c *gin.Context) {
 	// if user.Gender != "" {
 	// 	score.Gender = 20
 	// }
-	if !user.DOB.IsZero() {
-		score.DOB = 15
-	}
 	// if user.Interests[0] != "" {
 	// 	score.Interests = 10
 	// }

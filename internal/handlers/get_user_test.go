@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestRetrieveUser200(t *testing.T) {
+func TestGetUser200(t *testing.T) {
 	// TODO: happy test case. jwt and user id in path match
 	code, _, user := handlers.CreateTestUser(t)
 	handlers.SeedDB(&user)
