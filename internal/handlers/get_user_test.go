@@ -28,7 +28,7 @@ func TestGetUser200(t *testing.T) {
 	assert.Equal(t, "user succesfully retrieved", responseBody["message"])
 }
 
-func TestRetrieveUser400(t *testing.T) {
+func TestGetUser400(t *testing.T) {
 	code, _, user := handlers.CreateTestUser(t)
 	handlers.SeedDB(&user)
 
@@ -48,7 +48,7 @@ func TestRetrieveUser400(t *testing.T) {
 	assert.Equal(t, "not authorized", responseBody["message"])
 }
 
-func TestRetrieveUser400NoID(t *testing.T) {
+func TestGetUser400NoID(t *testing.T) {
 	code, _, user := handlers.CreateTestUser(t)
 	handlers.SeedDB(&user)
 
