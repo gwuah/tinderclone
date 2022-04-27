@@ -10,10 +10,10 @@ import (
 )
 
 type UpdateAccountRequest struct {
-	ID           string          `json:"id" binding:"required"`
-	FirstName    string          `json:"first_name" binding:"required"`
-	DOB          string          `json:"dob" binding:"required"`
-	Location     models.Location `json:"location" binding:"required"`
+	ID        string          `json:"id" binding:"required"`
+	FirstName string          `json:"first_name" binding:"required"`
+	DOB       string          `json:"dob" binding:"required"`
+	Location  models.Location `json:"location" binding:"required"`
 }
 
 func (h *Handler) UpdateAccount(c *gin.Context) {
@@ -27,7 +27,7 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		})
 		return
 	}
-	
+
 	user := models.User{
 		ID:        u.ID,
 		DOB:       lib.GetDob(u.DOB),
@@ -42,7 +42,6 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		})
 		return
 	}
-
 
 	err = h.repo.UserRepo.UpdateUserByID(user.ID, &user)
 	if err != nil {

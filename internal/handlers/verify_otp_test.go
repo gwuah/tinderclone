@@ -9,21 +9,21 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestVerifyOTPEndpoint_HappyPath(t *testing.T) {
+func TestVerifyOTPEndpoint200(t *testing.T) {
 	code, _, user := handlers.CreateTestUser(t)
 	handlers.SeedDB(&user)
 
 	req := handlers.MakeTestRequest(t, "/verifyOTP", map[string]interface{}{
 		"id":  user.ID,
 		"otp": code,
-	})
+	}, nil)
 
 	response := handlers.BootstrapServer(req, routeHandlers)
 	responseBody := handlers.DecodeResponse(t, response)
 	assert.Equal(t, "otp code verified", responseBody["message"])
 }
 
-func TestVerifyOTPEndpoint_UnhappyPath(t *testing.T) {
+func TestVerifyOTPEndpoint400(t *testing.T) {
 	f := faker.New()
 
 	_, _, user := handlers.CreateTestUser(t)
@@ -32,14 +32,14 @@ func TestVerifyOTPEndpoint_UnhappyPath(t *testing.T) {
 	req := handlers.MakeTestRequest(t, "/verifyOTP", map[string]interface{}{
 		"id":  user.ID,
 		"otp": f.Numerify("#####"),
-	})
+	}, nil)
 
 	response := handlers.BootstrapServer(req, routeHandlers)
 	responseBody := handlers.DecodeResponse(t, response)
 	assert.Equal(t, "failed to verify otp", responseBody["message"])
 }
 
-func TestVerifyOTPEndpoint_UnHappyPathNoOTP(t *testing.T) {
+func TestVerifyOTPEndpoint400NoOTP(t *testing.T) {
 	var otp string
 	_, _, user := handlers.CreateTestUser(t)
 	handlers.SeedDB(&user)
@@ -47,14 +47,14 @@ func TestVerifyOTPEndpoint_UnHappyPathNoOTP(t *testing.T) {
 	req := handlers.MakeTestRequest(t, "/verifyOTP", map[string]interface{}{
 		"id":  user.ID,
 		"otp": otp,
-	})
+	}, nil)
 
 	response := handlers.BootstrapServer(req, routeHandlers)
 	responseBody := handlers.DecodeResponse(t, response)
 	assert.Equal(t, "must provide an OTP and an ID. fields cannot be left empty", responseBody["message"])
 }
 
-func TestVerifyOTPEndpoint_UnHappyPathExpiredOTP(t *testing.T) {
+func TestVerifyOTPEndpoint400ExpiredOTP(t *testing.T) {
 	code, _, user := handlers.CreateTestUser(t)
 	user.OTPCreatedAt = user.OTPCreatedAt.Add(-5 * time.Minute)
 	handlers.SeedDB(&user)
@@ -62,7 +62,7 @@ func TestVerifyOTPEndpoint_UnHappyPathExpiredOTP(t *testing.T) {
 	req := handlers.MakeTestRequest(t, "/verifyOTP", map[string]interface{}{
 		"id":  user.ID,
 		"otp": code,
-	})
+	}, nil)
 
 	response := handlers.BootstrapServer(req, routeHandlers)
 	responseBody := handlers.DecodeResponse(t, response)

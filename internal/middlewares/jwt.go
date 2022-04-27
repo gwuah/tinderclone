@@ -1,11 +1,12 @@
 package middlewares
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/gwuah/tinderclone/internal/lib"
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gwuah/tinderclone/internal/lib"
 )
 
 //TODO: Update documetation when authenticated routes exist
@@ -22,22 +23,18 @@ func AuthorizeJWT() gin.HandlerFunc {
 		}
 
 		tokenString = strings.TrimPrefix(tokenString, "Bearer ")
-		token, err := lib.VerifyAccessToken(tokenString)
+		token, claims, err := lib.VerifyJWT(tokenString)
 		if err != nil {
 			log.Println(err)
 			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "token contains an invalid number of segments"})
 			return
 		}
 
-		_, ok := token.Claims.(*lib.JWTAuthDetails)
-		if !ok {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "invalid claims used for token"})
-			return
-		}
-
 		if !token.Valid {
 			c.AbortWithStatus(http.StatusUnauthorized)
 		}
+
+		c.Set("user_id", claims.UserID)
 
 	}
 }
