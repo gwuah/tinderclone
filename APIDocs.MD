@@ -82,7 +82,7 @@
 ```
 **Request**
 
-+ `POST /updateAccount`
++ `POST /auth/updateAccount`
 
 + `Content-type:` application/json
 
@@ -123,6 +123,21 @@
 "message": "user successfully updated"
 }
 ```
+
+**Request**
+
++ `POST /getLocation`
+
++ `Content-type:` application/json
+
++ `JSON body:`
+```
+{
+"latitude": "1.2223424",
+"longitude": "-1.232427",
+}
+
+```
 # Errors
 
 ## 400
@@ -161,7 +176,7 @@ special 500 errors could be sent on the `verifyOTP/` endpoint if SMS service fai
 }
 ```
 
-a 500 will be thrown if user update fails on an `updateAccount/`. The response takes this format:
+a 500 will be thrown if user update fails on an `auth/updateAccount/`. The response takes this format:
 + `StatusInternalServerError`
 ```
 {

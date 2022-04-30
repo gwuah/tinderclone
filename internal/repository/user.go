@@ -50,3 +50,4 @@ func (u *UserRepo) UpdateLocationByID(id string, loc models.Location) error {
 		id,
 	).Error
 }
+

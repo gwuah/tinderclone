@@ -47,7 +47,7 @@ func TestCreateAccountEndpoint(t *testing.T) {
 
 	req := handlers.MakeTestRequest(t, "/createAccount", map[string]interface{}{
 		"phone_number": f.Numerify("+##############"),
-	}, nil)
+	}, "POST", nil)
 
 	response := handlers.BootstrapServer(req, routeHandlers)
 	responseBody := handlers.DecodeResponse(t, response)

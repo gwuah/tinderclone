@@ -26,12 +26,30 @@ func NewUUID() string {
 	return uid.String()
 }
 
-func MakeRequest(endpoint string, port string, requestBody interface{}) (*http.Response, error) {
+func MakeRequest(endpoint string, port string, requestBody interface{}, method string) (*http.Response, error) {
 	body, err := json.Marshal(requestBody)
 	if err != nil {
 		return nil, err
 	}
-	req, err := http.NewRequest("POST", fmt.Sprintf("http://127.0.0.1:%s/%s", port, endpoint), bytes.NewReader(body))
+	req, err := http.NewRequest(method, fmt.Sprintf("http://127.0.0.1:%s/%s", port, endpoint), bytes.NewReader(body))
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, err
+}
+
+func MakeExternalAPIRequest(endpoint string, port string, requestBody interface{}, method string) (*http.Response, error) {
+	body, err := json.Marshal(requestBody)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest(method, endpoint, bytes.NewReader(body))
 	if err != nil {
 		return nil, err
 	}
@@ -63,6 +81,7 @@ func SeedDB(r ...interface{}) *gorm.DB {
 	return dbConnPool
 }
 
+
 func CreateTestUser(t *testing.T) (string, string, *models.User) {
 	f := faker.New()
 
@@ -77,6 +96,7 @@ func CreateTestUser(t *testing.T) (string, string, *models.User) {
 		PhoneNumber:  f.Numerify("+##############"),
 		OTP:          string(hashedCode),
 		OTPCreatedAt: lib.GenerateOTPExpiryDate(),
+		Bio:          "Cool kid.",
 	}
 
 	return code, string(hashedCode), &testUser
@@ -88,11 +108,11 @@ func BootstrapServer(req *http.Request, routeHandlers *gin.Engine) *httptest.Res
 	return responseRecorder
 }
 
-func MakeTestRequest(t *testing.T, route string, body interface{}, token *interface{}) *http.Request {
+func MakeTestRequest(t *testing.T, route string, body interface{}, method string, token *interface{}) *http.Request {
 	reqBody, err := json.Marshal(body)
 	assert.NoError(t, err)
 
-	req, err := http.NewRequest("POST", route, bytes.NewReader(reqBody))
+	req, err := http.NewRequest(method, route, bytes.NewReader(reqBody))
 	if token != nil {
 		req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", *token))
 	}
@@ -103,7 +123,9 @@ func MakeTestRequest(t *testing.T, route string, body interface{}, token *interf
 }
 
 func DecodeResponse(t *testing.T, response *httptest.ResponseRecorder) map[string]interface{} {
+	log.Println(response.Code)
 	var responseBody map[string]interface{}
 	assert.NoError(t, json.Unmarshal(response.Body.Bytes(), &responseBody))
+	log.Println(responseBody)
 	return responseBody
 }
