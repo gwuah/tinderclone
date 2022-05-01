@@ -122,9 +122,7 @@ func MakeTestRequest(t *testing.T, route string, body interface{}, method string
 }
 
 func DecodeResponse(t *testing.T, response *httptest.ResponseRecorder) map[string]interface{} {
-	log.Println(response.Code)
 	var responseBody map[string]interface{}
 	assert.NoError(t, json.Unmarshal(response.Body.Bytes(), &responseBody))
-	log.Println(responseBody)
 	return responseBody
 }
