@@ -36,6 +36,7 @@ func (h *Handler) GetUser(c *gin.Context) {
 	if user.FirstName != "" {
 		score.FirstName = 5
 	}
+
 	if !user.DOB.IsZero() {
 		score.DOB = 15
 	}
@@ -57,8 +58,15 @@ func (h *Handler) GetUser(c *gin.Context) {
 		score.Interests = 10
 	}
 
+	if user.ProfilePhoto != "" {
+		score.ProfilePhoto = 25
+	}
+
+	user.Sanitize()
+
 	c.JSON(http.StatusOK, gin.H{
 		"message": "user successfully retrieved",
 		"user":    user,
+		"score":   score,
 	})
 }

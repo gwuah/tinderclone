@@ -10,14 +10,15 @@ import (
 )
 
 type UpdateAccountRequest struct {
-	ID        string          `json:"id" binding:"required"`
-	FirstName string          `json:"first_name"`
-	LastName  string          `json:"last_name"`
-	DOB       string          `json:"dob"`
-	Location  models.Location `json:"location"`
-	Bio       string          `json:"bio"`
-	Gender    string          `json:"gender"`
-	Interests string          `json:"interests"`
+	ID           string          `json:"id" binding:"required"`
+	FirstName    string          `json:"first_name"`
+	LastName     string          `json:"last_name"`
+	DOB          string          `json:"dob"`
+	Location     models.Location `json:"location"`
+	Bio          string          `json:"bio"`
+	Gender       string          `json:"gender"`
+	Interests    string          `json:"interests"`
+	ProfilePhoto string          `json:"profile_photo"`
 }
 
 func (h *Handler) UpdateAccount(c *gin.Context) {
@@ -32,24 +33,32 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		return
 	}
 
-	user := models.User{
-		ID:        u.ID,
-		DOB:       lib.GetDob(u.DOB),
-		FirstName: u.FirstName,
-		LastName:  u.LastName,
-		Bio:       u.Bio,
-		Gender:    u.Gender,
-		Interests: u.Interests,
+	authorizedUserID, ok := c.Get("user_id")
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "request failed. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
+		})
+		return
 	}
 
-	// err := h.repo.UserRepo.UpdateLocationByID(u.ID, u.Location)
-	// if err != nil {
-	// 	log.Println(err)
-	// 	c.JSON(http.StatusInternalServerError, gin.H{
-	// 		"message": "failed to update user location",
-	// 	})
-	// 	return
-	// }
+	if u.ID != authorizedUserID {
+		c.JSON(http.StatusUnauthorized, gin.H{
+			"message": "not authorized",
+		})
+		return
+	}
+
+	user := models.User{
+		ID:           u.ID,
+		DOB:          lib.GetDob(u.DOB),
+		FirstName:    u.FirstName,
+		LastName:     u.LastName,
+		Bio:          u.Bio,
+		Location:     u.Location,
+		Gender:       u.Gender,
+		Interests:    u.Interests,
+		ProfilePhoto: u.ProfilePhoto,
+	}
 
 	err := h.repo.UserRepo.UpdateUserByID(user.ID, &user)
 	if err != nil {

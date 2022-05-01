@@ -81,7 +81,6 @@ func SeedDB(r ...interface{}) *gorm.DB {
 	return dbConnPool
 }
 
-
 func CreateTestUser(t *testing.T) (string, string, *models.User) {
 	f := faker.New()
 
