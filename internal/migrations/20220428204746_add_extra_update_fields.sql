@@ -11,7 +11,8 @@ ALTER TABLE users
     DROP last_name,
     DROP interests,
     DROP bio,       
-    DROP gender;
+    DROP gender
+    DROP profile_photo;
 
 
     
