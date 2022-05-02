@@ -2,8 +2,6 @@ package lib
 
 import (
 	"crypto/rand"
-	"encoding/json"
-	"log"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -40,13 +38,3 @@ func GetDob(date string) time.Time {
 	return dateOfBirth
 }
 
-func ReturnSliceFromString(stringSlice string) []string {
-	var newSlice []string
-
-	err := json.Unmarshal([]byte(stringSlice), &newSlice)
-	if err != nil {
-		log.Println(err)
-	}
-
-	return newSlice
-}
