@@ -16,12 +16,14 @@ func (h *Handler) GetUser(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "request failed. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
 		})
+		return
 	}
 
 	if c.Param("id") != authorizedUserID {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"message": "not authorized",
 		})
+		return
 	}
 
 	user, err := h.repo.UserRepo.FindUserByID(c.Param("id"))
@@ -34,27 +36,37 @@ func (h *Handler) GetUser(c *gin.Context) {
 	if user.FirstName != "" {
 		score.FirstName = 5
 	}
+
 	if !user.DOB.IsZero() {
 		score.DOB = 15
 	}
-	// if user.LastName != "" {
-	// 	score.LastName = 5
-	// }
-	// if user.Location != "" {
-	// 	score.Location = 15
-	// }
-	// if user.Bio != "" {
-	// 	score.Bio = 5
-	// }
-	// if user.Gender != "" {
-	// 	score.Gender = 20
-	// }
-	// if user.Interests[0] != "" {
-	// 	score.Interests = 10
-	// }
+	if user.LastName != "" {
+		score.LastName = 5
+	}
+
+	if user.Location.Latitude != 0 && user.Location.Longitude != 0 {
+		score.Location = 15
+	}
+
+	if user.Bio != "" {
+		score.Bio = 5
+	}
+	if user.Gender != "" {
+		score.Gender = 20
+	}
+	if user.Interests != "" {
+		score.Interests = 10
+	}
+
+	if user.ProfilePhoto != "" {
+		score.ProfilePhoto = 25
+	}
+	
+	user.Scores = score
+	user.Sanitize()
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "user succesfully retrieved",
+		"message": "user successfully retrieved",
 		"user":    user,
 	})
 }

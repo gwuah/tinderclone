@@ -14,6 +14,6 @@ ALTER TABLE users
     DROP dob,
     DROP location;
 
-DROP INDEX users_location;
+DROP INDEX IF EXISTS users_location;
 
 DROP EXTENSION IF EXISTS postgis CASCADE;

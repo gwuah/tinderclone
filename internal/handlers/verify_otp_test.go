@@ -11,12 +11,12 @@ import (
 
 func TestVerifyOTPEndpoint200(t *testing.T) {
 	code, _, user := handlers.CreateTestUser(t)
-	handlers.SeedDB(&user)
+	handlers.SeedDB(user)
 
 	req := handlers.MakeTestRequest(t, "/verifyOTP", map[string]interface{}{
 		"id":  user.ID,
 		"otp": code,
-	}, nil)
+	}, "POST", nil)
 
 	response := handlers.BootstrapServer(req, routeHandlers)
 	responseBody := handlers.DecodeResponse(t, response)
@@ -27,12 +27,12 @@ func TestVerifyOTPEndpoint400(t *testing.T) {
 	f := faker.New()
 
 	_, _, user := handlers.CreateTestUser(t)
-	handlers.SeedDB(&user)
+	handlers.SeedDB(user)
 
 	req := handlers.MakeTestRequest(t, "/verifyOTP", map[string]interface{}{
 		"id":  user.ID,
 		"otp": f.Numerify("#####"),
-	}, nil)
+	}, "POST", nil)
 
 	response := handlers.BootstrapServer(req, routeHandlers)
 	responseBody := handlers.DecodeResponse(t, response)
@@ -42,12 +42,12 @@ func TestVerifyOTPEndpoint400(t *testing.T) {
 func TestVerifyOTPEndpoint400NoOTP(t *testing.T) {
 	var otp string
 	_, _, user := handlers.CreateTestUser(t)
-	handlers.SeedDB(&user)
+	handlers.SeedDB(user)
 
 	req := handlers.MakeTestRequest(t, "/verifyOTP", map[string]interface{}{
 		"id":  user.ID,
 		"otp": otp,
-	}, nil)
+	}, "POST", nil)
 
 	response := handlers.BootstrapServer(req, routeHandlers)
 	responseBody := handlers.DecodeResponse(t, response)
@@ -57,12 +57,12 @@ func TestVerifyOTPEndpoint400NoOTP(t *testing.T) {
 func TestVerifyOTPEndpoint400ExpiredOTP(t *testing.T) {
 	code, _, user := handlers.CreateTestUser(t)
 	user.OTPCreatedAt = user.OTPCreatedAt.Add(-5 * time.Minute)
-	handlers.SeedDB(&user)
+	handlers.SeedDB(user)
 
 	req := handlers.MakeTestRequest(t, "/verifyOTP", map[string]interface{}{
 		"id":  user.ID,
 		"otp": code,
-	}, nil)
+	}, "POST", nil)
 
 	response := handlers.BootstrapServer(req, routeHandlers)
 	responseBody := handlers.DecodeResponse(t, response)

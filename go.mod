@@ -14,6 +14,7 @@ require (
 	github.com/jaswdr/faker v1.10.1
 	github.com/joho/godotenv v1.4.0
 	github.com/stretchr/testify v1.7.0
+	github.com/twpayne/go-geom v1.4.1
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 	gorm.io/driver/postgres v1.2.3
 	gorm.io/gorm v1.22.5
