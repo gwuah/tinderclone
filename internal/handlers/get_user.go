@@ -61,12 +61,12 @@ func (h *Handler) GetUser(c *gin.Context) {
 	if user.ProfilePhoto != "" {
 		score.ProfilePhoto = 25
 	}
-
+	
+	user.Scores = score
 	user.Sanitize()
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "user successfully retrieved",
 		"user":    user,
-		"score":   score,
 	})
 }

@@ -171,16 +171,6 @@
 ```
 {
 "message": "user successfully retrieved",
-"score": {
-"firstname": 5,
-"lastname": 5,
-"location": 15,
-"bio": 5,
-"gender": 20,
-"dob": 15,
-"interests": 10,
-"profile_photo": 25
-},
 "user": {
 "id": "9763e6a7-a8ae-438c-868d-16252bb7c8d9",
 "country_code": "",
@@ -199,15 +189,15 @@
 "dob": "2000-04-26T00:00:00Z",
 "gender": "male",
 "interests": "['football', 'basketball'. 'biking']",
-"scores": {
-"firstname": 0,
-"lastname": 0,
-"location": 0,
-"bio": 0,
-"gender": 0,
-"dob": 0,
-"interests": 0,
-"profile_photo": 0
+"score": {
+"firstname": 5,
+"lastname": 5,
+"location": 15,
+"bio": 5,
+"gender": 20,
+"dob": 15,
+"interests": 10,
+"profile_photo": 25
 },
 "profile_photo": "http://someurl"
 }

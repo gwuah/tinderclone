@@ -45,7 +45,7 @@ func (h *Handler) GetLocation(c *gin.Context) {
 		return
 	}
 
-	response, err := MakeExternalAPIRequest(fmt.Sprintf("http://api.positionstack.com/v1/reverse?access_key=%s&query=%s,%s&limit=%d",
+	response, err := MakeRequest(fmt.Sprintf("http://api.positionstack.com/v1/reverse?access_key=%s&query=%s,%s&limit=%d",
 		os.Getenv("ACCESS_KEY"), l.Latitude, l.Longitude, 1), os.Getenv("PORT"), nil, "GET")
 
 	if err != nil {
