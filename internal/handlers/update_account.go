@@ -17,7 +17,7 @@ type UpdateAccountRequest struct {
 	Location     models.Location `json:"location"`
 	Bio          string          `json:"bio"`
 	Gender       string          `json:"gender"`
-	Interests    string          `json:"interests"`
+	Interests    []string        `json:"interests"`
 	ProfilePhoto string          `json:"profile_photo"`
 }
 
@@ -56,7 +56,7 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		Bio:          u.Bio,
 		Location:     u.Location,
 		Gender:       u.Gender,
-		Interests:    u.Interests,
+		Interests:    lib.SliceToString(u.Interests),
 		ProfilePhoto: u.ProfilePhoto,
 	}
 

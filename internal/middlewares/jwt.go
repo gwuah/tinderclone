@@ -10,6 +10,7 @@ import (
 )
 
 //TODO: Update documetation when authenticated routes exist
+
 func AuthorizeJWT() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.Request.Header.Get("Authorization")

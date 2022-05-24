@@ -2,9 +2,9 @@ package lib
 
 import (
 	"crypto/rand"
-	"time"
-
 	"golang.org/x/crypto/bcrypt"
+	"strings"
+	"time"
 )
 
 const otpChars = "1234567890"
@@ -38,3 +38,12 @@ func GetDob(date string) time.Time {
 	return dateOfBirth
 }
 
+func SliceToString(slice []string) string {
+	stringifiedSlice := strings.Join(slice, ",")
+	return stringifiedSlice
+}
+
+func StringToSlice(stringifiedSlice string) []string {
+	slice := strings.Split(stringifiedSlice, ",")
+	return slice
+}
