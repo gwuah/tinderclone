@@ -107,7 +107,7 @@
 | `bio` | `string` |  
 | `location` | `json object` |  
 | `last_name` | `string` |  
-| `interests` | `string` |  
+| `interests` | `[]string` |  
 | `profile_photo` | `string` |  
 
 
@@ -131,7 +131,7 @@
 },
 "dob": "2000-04-26T00:00:00Z",
 "gender": "",
-"interests": "['football', 'basketball'. 'biking']",
+"interests": 'football,basketball,biking',
 "scores": {
 "firstname": 0,
 "lastname": 0,

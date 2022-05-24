@@ -61,7 +61,7 @@ func (h *Handler) GetUser(c *gin.Context) {
 	if user.ProfilePhoto != "" {
 		score.ProfilePhoto = 25
 	}
-	
+
 	user.Scores = score
 	user.Sanitize()
 
