@@ -4,16 +4,15 @@ import (
 	"log"
 	"os"
 
-	
+	"github.com/go-redis/redis"
 	"github.com/gwuah/tinderclone/internal/config"
 	"github.com/gwuah/tinderclone/internal/handlers"
 	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/postgres"
 	"github.com/gwuah/tinderclone/internal/queue"
 	"github.com/gwuah/tinderclone/internal/repository"
-	"github.com/gwuah/tinderclone/internal/workers"
-	"github.com/go-redis/redis"
 	"github.com/gwuah/tinderclone/internal/server"
+	"github.com/gwuah/tinderclone/internal/workers"
 )
 
 func main() {
@@ -27,18 +26,19 @@ func main() {
 		log.Fatal(err)
 	}
 
-	redisClient := redis.NewClient(&redis.Options{
-		Addr: os.Getenv("REDIS_URL"),
-		Password: os.Getenv("REDIS_PASSWORD"),
-		DB: 0,
-	})
-
-	repo := repository.New(db, redisClient)
+	repo := repository.New(db)
 
 	sms, err := lib.NewTermii(os.Getenv("SMS_API_KEY"))
 	if err != nil {
 		log.Fatal(err)
 	}
+
+
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     os.Getenv("REDIS_URL"),
+		Password: os.Getenv("REDIS_PASSWORD"),
+		DB:       0,
+	})
 
 	q, err := queue.New()
 	if err != nil {
@@ -50,6 +50,7 @@ func main() {
 
 	w := q.RegisterJobs([]queue.JobWorker{
 		workers.NewSMSWorker(sms),
+		workers.NewRedisWorker(redisClient),
 	})
 	go w.Start()
 
