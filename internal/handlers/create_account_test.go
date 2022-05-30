@@ -5,6 +5,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/go-redis/redis"
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/config"
 	"github.com/gwuah/tinderclone/internal/handlers"
@@ -35,7 +36,13 @@ func TestMain(m *testing.M) {
 		log.Fatal(err)
 	}
 
-	repo := repository.New(db)
+	testRedisClient := redis.NewClient(&redis.Options{
+		Addr: os.Getenv("REDIS_TEST_URL"),
+		Password: os.Getenv("REDIS_TEST_PASSWORD"),
+		DB: 0,
+	})
+
+	repo := repository.New(db, testRedisClient)
 	handler := handlers.New(repo, sms, q)
 	srv := server.New(handler)
 	routeHandlers = srv.SetupRoutes()

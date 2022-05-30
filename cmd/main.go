@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	
 	"github.com/gwuah/tinderclone/internal/config"
 	"github.com/gwuah/tinderclone/internal/handlers"
 	"github.com/gwuah/tinderclone/internal/lib"
@@ -11,7 +12,7 @@ import (
 	"github.com/gwuah/tinderclone/internal/queue"
 	"github.com/gwuah/tinderclone/internal/repository"
 	"github.com/gwuah/tinderclone/internal/workers"
-
+	"github.com/go-redis/redis"
 	"github.com/gwuah/tinderclone/internal/server"
 )
 
@@ -26,7 +27,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	repo := repository.New(db)
+	redisClient := redis.NewClient(&redis.Options{
+		Addr: os.Getenv("REDIS_URL"),
+		Password: os.Getenv("REDIS_PASSWORD"),
+		DB: 0,
+	})
+
+	repo := repository.New(db, redisClient)
 
 	sms, err := lib.NewTermii(os.Getenv("SMS_API_KEY"))
 	if err != nil {
