@@ -1,6 +1,12 @@
 package models
 
 import (
+	"context"
+	"fmt"
+	"github.com/twpayne/go-geom/encoding/ewkbhex"
+	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
+	"log"
 	"time"
 )
 
@@ -29,11 +35,40 @@ type User struct {
 	CreatedAt    time.Time `json:"created_at" sql:"type:timestamp without time zone" `
 	OTPCreatedAt time.Time `json:"otp_created_at" sql:"type:timestamp without time zone" `
 	FirstName    string    `json:"first_name"`
+	LastName     string    `json:"last_name"`
+	Bio          string    `json:"bio"`
+	Location     Location  `json:"location"`
 	DOB          time.Time `json:"dob" sql:"type:timestamp without time zone"`
+	Gender       string    `json:"gender"`
+	Interests    string    `json:"interests"`
 	Scores       Scores    `json:"scores" gorm:"-"`
+	ProfilePhoto string    `json:"profile_photo"`
 }
 
 func (u *User) Sanitize() {
 	u.OTP = ""
 	u.OTPCreatedAt = time.Time{}
+}
+
+func (loc Location) GormDataType() string {
+	return "geometry"
+}
+
+func (loc Location) GormValue(ctx context.Context, db *gorm.DB) clause.Expr {
+	return gorm.Expr("ST_PointFromText(?)", fmt.Sprintf("POINT(%.8f %.8f)", loc.Longitude, loc.Latitude))
+}
+
+func (loc *Location) Scan(v interface{}) error {
+	hexWKBString, ok := v.(string)
+	if !ok {
+		return nil
+	}
+
+	decodedHexWKBString, err := ewkbhex.Decode(hexWKBString)
+	if err != nil {
+		log.Println(err)
+	}
+	arrayOfCoordinates := decodedHexWKBString.FlatCoords()
+	loc.Longitude, loc.Latitude = arrayOfCoordinates[0], arrayOfCoordinates[1]
+	return nil
 }

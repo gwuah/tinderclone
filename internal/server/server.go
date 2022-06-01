@@ -36,8 +36,9 @@ func (s *Server) SetupRoutes() *gin.Engine {
 
 	s.e.GET("/healthCheck", s.h.HealthCheck)
 	s.e.POST("/createAccount", s.h.CreateAccount)
-	s.e.POST("/verifyOTP", s.h.VerifyOTP)
 	s.e.POST("/updateAccount", s.h.UpdateAccount)
+	s.e.POST("/verifyOTP", s.h.VerifyOTP)
+	s.e.POST("/getLocation", s.h.GetLocation)
 
 	authenticatedRoutes := s.e.Group("/auth").Use(middlewares.AuthorizeJWT())
 	{

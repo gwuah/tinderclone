@@ -10,6 +10,7 @@ import (
 )
 
 //TODO: Update documetation when authenticated routes exist
+
 func AuthorizeJWT() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.Request.Header.Get("Authorization")
@@ -32,6 +33,7 @@ func AuthorizeJWT() gin.HandlerFunc {
 
 		if !token.Valid {
 			c.AbortWithStatus(http.StatusUnauthorized)
+			return
 		}
 
 		c.Set("user_id", claims.UserID)

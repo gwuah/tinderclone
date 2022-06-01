@@ -2,8 +2,8 @@ package lib
 
 import (
 	//"os"
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestGenerateOTP(t *testing.T) {

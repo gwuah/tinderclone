@@ -8,6 +8,8 @@ Table of Contents:
     - [Create User Account](#create-user-account)
     - [Verify User OTP](#verify-user-otp)
     - [Update User Account](#update-user-account)
+    - [Get User Location](#get-user-location)
+    - [Get User Data](#get-user-data)
   - [Error HTTP Status Codes](#error-http-status-codes)
     - [400](#400)
     - [401](#401)
@@ -105,7 +107,7 @@ Table of Contents:
 
 **Request**
 
-- `POST /updateAccount`
+- `POST /auth/updateAccount`
 
 - `Content-type:` application/json
 
@@ -122,12 +124,17 @@ Table of Contents:
 
 ```
 
-|     **Key**    | **Type** | **Remarks** |
-|:--------------:|:--------:|:-----------:|
+|     **Key**    | **Type** |
+|:--------------:|:--------:|
 | `id` | `uuid` | required  |
-| `first_name` | `string` | required  |
-| `dob` | `string` | required  |
-| `location` | `json object` | required  |
+| `first_name` | `string` |  
+| `dob` | `string` |  
+| `gender` | `string` |  
+| `bio` | `string` |  
+| `location` | `json object` |  
+| `last_name` | `string` |  
+| `interests` | `[]string` |  
+| `profile_photo` | `string` |  
 
 
 **Sample Response**
@@ -135,7 +142,7 @@ Table of Contents:
 ```json
 {
 "data": {
-"id": "2fe743f9-9d1d-45ce-bb4f-cb253e248099",
+"id": "9763e6a7-a8ae-438c-868d-16252bb7c8d9",
 "country_code": "",
 "phone_number": "",
 "otp": "",
@@ -143,10 +150,97 @@ Table of Contents:
 "created_at": "0001-01-01T00:00:00Z",
 "otp_created_at": "0001-01-01T00:00:00Z",
 "first_name": "kwaku",
+"last_name": "",
+"bio": "",
+"location": {
+"longitude": 164.7541232424,
+"latitude": -77.508333
+},
 "dob": "2000-04-26T00:00:00Z",
-"location": ""
+"gender": "",
+"interests": "football,basketball,biking",
+"scores": {
+"firstname": 0,
+"lastname": 0,
+"location": 0,
+"bio": 0,
+"gender": 0,
+"dob": 0,
+"interests": 0,
+"profile_photo": 0
+}
 },
 "message": "user successfully updated"
+}
+```
+
+### Get User Location
+
+**Request**
+
+- `POST /getLocation`
+
+- `Content-type:` application/json
+
+- `JSON body:`
+  
+```json
+{
+"latitude": "1.2223424",
+"longitude": "-1.232427",
+}
+```
+
+**Sample Response**
+
+```json
+{
+"data":
+}
+```
+
+
+### Get User Data
+
+**Request**
+
+- `GET /getUser/<userID>`
+
+**Sample Response**
+
+```json
+{
+"message": "user successfully retrieved",
+"user": {
+  "id": "9763e6a7-a8ae-438c-868d-16252bb7c8d9",
+  "country_code": "",
+  "phone_number": "+233550156396",
+  "otp": "",
+  "raw_otp": "99832",
+  "created_at": "2022-05-01T10:16:47.582649Z",
+  "otp_created_at": "0001-01-01T00:00:00Z",
+  "first_name": "kwaku",
+  "last_name": "og",
+  "bio": "cool kid",
+  "location": {
+    "longitude": 164.75412324,
+    "latitude": -77.508333
+  },
+  "dob": "2000-04-26T00:00:00Z",
+  "gender": "male",
+  "interests": "['football', 'basketball'. 'biking']",
+  "score": {
+    "firstname": 5,
+    "lastname": 5,
+    "location": 15,
+    "bio": 5,
+    "gender": 20,
+    "dob": 15,
+    "interests": 10,
+    "profile_photo": 25
+  },
+  "profile_photo": "http://someurl"
+}
 }
 ```
 
