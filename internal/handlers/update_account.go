@@ -8,7 +8,6 @@ import (
 	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/models"
 	"github.com/gwuah/tinderclone/internal/workers"
-
 )
 
 type UpdateAccountRequest struct {
@@ -71,9 +70,9 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		return
 	}
 
-	err = h.q.QueueJob(workers.UPDATE_REDIS_BUCKET, workers.RedisPayload{
-		StringOfInterests:  lib.SliceToString(u.Interests),
-		ID: u.ID,
+	err = h.q.QueueJob(workers.ADD_TO_INTEREST_BUCKETS, workers.AddToInterestBucketPayload{
+		Interests: u.Interests,
+		ID:        u.ID,
 	})
 
 	if err != nil {

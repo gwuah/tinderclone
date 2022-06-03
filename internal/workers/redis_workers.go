@@ -3,57 +3,51 @@ package workers
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 
 	"github.com/bgentry/que-go"
 	"github.com/go-redis/redis"
-	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/queue"
 )
 
-type RedisWorker struct {
+type AddToInterestBuckerWorker struct {
 	RedisClient *redis.Client
 }
 
-type RedisPayload struct {
-	StringOfInterests string
-	ID                string
+type AddToInterestBucketPayload struct {
+	Interests []string
+	ID        string
 }
 
-func NewRedisWorker(redisClient *redis.Client) *RedisWorker {
-	return &RedisWorker{
+func NewAddToInterestBuckerWorker(redisClient *redis.Client) *AddToInterestBuckerWorker {
+	return &AddToInterestBuckerWorker{
 		RedisClient: redisClient,
 	}
 }
 
-func (r *RedisWorker) UpdateBucketWithInterests(StringOfInterests string, id string) error {
-	sliceOfInterests := lib.StringToSlice(StringOfInterests)
-	for _, element := range sliceOfInterests {
-		x := r.RedisClient.SAdd(element, id)
-		if err := x.Err(); err != nil {
-			log.Println(err)
+func (r *AddToInterestBuckerWorker) AddUserToEachInterestBucket(interests []string, id string) error {
+	for _, interest := range interests {
+		if err := r.RedisClient.SAdd(interest, id).Err(); err != nil {
 			return err
 		}
 	}
 	return nil
 }
 
-func (r *RedisWorker) Identifier() queue.Job {
-	return UPDATE_REDIS_BUCKET
+func (r *AddToInterestBuckerWorker) Identifier() queue.Job {
+	return ADD_TO_INTEREST_BUCKETS
 }
 
-func (r *RedisWorker) Worker() que.WorkFunc {
+func (r *AddToInterestBuckerWorker) Worker() que.WorkFunc {
 	return func(j *que.Job) error {
-		var req RedisPayload
+		var req AddToInterestBucketPayload
 		if err := json.Unmarshal(j.Args, &req); err != nil {
 			return fmt.Errorf("unmarshal job failed. args= %s | err= %w", string(j.Args), err)
 		}
 
-		err := r.UpdateBucketWithInterests(req.StringOfInterests, req.ID)
+		err := r.AddUserToEachInterestBucket(req.Interests, req.ID)
 		if err != nil {
 			return fmt.Errorf("failed to populate redis bucket, error: \n %w", err)
 		}
-		
 		return nil
 	}
 }

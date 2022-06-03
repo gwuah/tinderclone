@@ -33,7 +33,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-
 	redisClient := redis.NewClient(&redis.Options{
 		Addr:     os.Getenv("REDIS_URL"),
 		Password: os.Getenv("REDIS_PASSWORD"),
@@ -50,10 +49,9 @@ func main() {
 
 	w := q.RegisterJobs([]queue.JobWorker{
 		workers.NewSMSWorker(sms),
-		workers.NewRedisWorker(redisClient),
+		workers.NewAddToInterestBuckerWorker(redisClient),
 	})
 	go w.Start()
 
 	server.Start()
-
 }
