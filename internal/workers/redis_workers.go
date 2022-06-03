@@ -9,7 +9,7 @@ import (
 	"github.com/gwuah/tinderclone/internal/queue"
 )
 
-type AddToInterestBuckerWorker struct {
+type AddToInterestBucketWorker struct {
 	RedisClient *redis.Client
 }
 
@@ -18,13 +18,13 @@ type AddToInterestBucketPayload struct {
 	ID        string
 }
 
-func NewAddToInterestBuckerWorker(redisClient *redis.Client) *AddToInterestBuckerWorker {
-	return &AddToInterestBuckerWorker{
+func NewAddToInterestBuckerWorker(redisClient *redis.Client) *AddToInterestBucketWorker {
+	return &AddToInterestBucketWorker{
 		RedisClient: redisClient,
 	}
 }
 
-func (r *AddToInterestBuckerWorker) AddUserToEachInterestBucket(interests []string, id string) error {
+func (r *AddToInterestBucketWorker) AddUserToEachInterestBucket(interests []string, id string) error {
 	for _, interest := range interests {
 		if err := r.RedisClient.SAdd(interest, id).Err(); err != nil {
 			return err
@@ -33,11 +33,11 @@ func (r *AddToInterestBuckerWorker) AddUserToEachInterestBucket(interests []stri
 	return nil
 }
 
-func (r *AddToInterestBuckerWorker) Identifier() queue.Job {
+func (r *AddToInterestBucketWorker) Identifier() queue.Job {
 	return ADD_TO_INTEREST_BUCKETS
 }
 
-func (r *AddToInterestBuckerWorker) Worker() que.WorkFunc {
+func (r *AddToInterestBucketWorker) Worker() que.WorkFunc {
 	return func(j *que.Job) error {
 		var req AddToInterestBucketPayload
 		if err := json.Unmarshal(j.Args, &req); err != nil {
@@ -51,3 +51,5 @@ func (r *AddToInterestBuckerWorker) Worker() que.WorkFunc {
 		return nil
 	}
 }
+
+
