@@ -288,7 +288,7 @@ This error is returned when the service is unable to unmarshal JSON POST request
 }
 ```
 
-The 401 error is issued when a client without accurate authentication credentials tries to request a private service/resource. It will typically take the the form of the error message above. Additional error messages of this type include:
+The 401 error is issued when a client without accurate authentication credentials tries to request a private service/resource. It will typically take the form of the error message above. Additional error messages of this type include:
 
 ```json
 {
