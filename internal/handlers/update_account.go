@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/models"
+	"github.com/gwuah/tinderclone/internal/workers"
 )
 
 type UpdateAccountRequest struct {
@@ -66,6 +67,16 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "failed to update user",
 		})
+		return
+	}
+
+	err = h.q.QueueJob(workers.ADD_TO_INTEREST_BUCKETS, workers.AddToInterestBucketPayload{
+		Interests: u.Interests,
+		ID:        u.ID,
+	})
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to populate redis"})
 		return
 	}
 
