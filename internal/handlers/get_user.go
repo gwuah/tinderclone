@@ -13,7 +13,7 @@ func (h *Handler) GetUser(c *gin.Context) {
 
 	authorizedUserID, ok := c.Get("user_id")
 	if !ok {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.JSON(http.StatusBadRequest, gin.H{
 			"message": "request failed. check documentation: https://github.com/gwuah/tinderclone/blob/master/Readme.MD",
 		})
 		return

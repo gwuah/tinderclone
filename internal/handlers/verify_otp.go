@@ -46,13 +46,13 @@ func (h *Handler) VerifyOTP(c *gin.Context) {
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.OTP), []byte(requestData.OTP)); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"message": "failed to verify otp"})
+		c.JSON(http.StatusUnauthorized, gin.H{"message": "failed to verify otp"})
 		return
 	}
 
 	token, err := lib.GenerateJWTToken(*user)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"message": "failed to generate jwt token"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to generate jwt token"})
 		return
 	}
 
