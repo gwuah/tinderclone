@@ -3,6 +3,7 @@ package repository
 import (
 	"fmt"
 
+	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/models"
 	"gorm.io/gorm"
 )
@@ -35,6 +36,20 @@ func (u *UserRepo) FindUserByID(id string) (*models.User, error) {
 		return nil, db.Error
 	}
 	return &user, db.Error
+}
+
+func (u *UserRepo) FindUserInterests(id string) ([]string, error) {
+	type Interests struct {
+		Interests string
+	}
+	var userInt Interests
+	db := u.db.Where("id = ?", id).Find(&userInt)
+	if db.Error != nil {
+		return nil, db.Error
+	}
+	interests := lib.StringToSlice(userInt.Interests)
+
+	return interests, nil
 }
 
 func (u *UserRepo) UpdateUserByID(id string, user *models.User) error {

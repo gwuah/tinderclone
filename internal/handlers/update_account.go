@@ -3,11 +3,13 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"reflect"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/models"
 	"github.com/gwuah/tinderclone/internal/workers"
+	"github.com/thoas/go-funk"
 )
 
 type UpdateAccountRequest struct {
@@ -70,14 +72,52 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		return
 	}
 
-	err = h.q.QueueJob(workers.ADD_TO_INTEREST_BUCKETS, workers.AddToInterestBucketPayload{
-		Interests: u.Interests,
-		ID:        u.ID,
-	})
-
+	interests, err := h.repo.UserRepo.FindUserInterests(user.ID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to populate redis"})
-		return
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to find interests",
+		})
+	}
+	if len(interests) > 0 {
+		if !reflect.DeepEqual(u.Interests, interests) {
+			toAdd, toRemove := funk.Difference(u.Interests, interests)
+			err = h.q.QueueJob(workers.ADD_TO_INTEREST_BUCKETS, workers.AddToInterestBucketPayload{
+				Interests: toAdd,
+				ID:        u.ID,
+			})
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to populate redis"})
+				return
+			}
+
+			if err = h.q.QueueJob(workers.REMOVE_FROM_INTEREST_BUCKETS, workers.RemoveFromInterestBucketPayload{
+				Interests: toRemove,
+				ID:        u.ID,
+			}); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to depopulate redis"})
+				return
+			}
+		} else {
+			// no change happened. skip or call redis sadd again.
+			err = h.q.QueueJob(workers.ADD_TO_INTEREST_BUCKETS, workers.AddToInterestBucketPayload{
+				Interests: u.Interests,
+				ID:        u.ID,
+			})
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to populate redis"})
+				return
+			}
+		}
+	} else {
+		err = h.q.QueueJob(workers.ADD_TO_INTEREST_BUCKETS, workers.AddToInterestBucketPayload{
+			Interests: u.Interests,
+			ID:        u.ID,
+		})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to populate redis"})
+			return
+		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{

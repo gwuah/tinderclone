@@ -2,8 +2,10 @@ package lib
 
 import (
 	//"os"
-	"github.com/stretchr/testify/assert"
+
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGenerateOTP(t *testing.T) {
@@ -20,3 +22,16 @@ func TestGenerateOTP(t *testing.T) {
 
 // 	assert.NoError(t, err)
 // }
+
+func TestStringToSlice(t *testing.T) {
+	var outputSlice []string
+	testString := []string{"", "a, b, c"}
+	for _, v := range testString {
+		testSlice := StringToSlice(v)
+		outputSlice = append(outputSlice, testSlice...)
+	}
+
+	expectedOutput := []string{"", "a", "b", "c"}
+	assert.Equal(t, len(expectedOutput), len(outputSlice))
+	// why does this pass
+}

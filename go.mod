@@ -48,6 +48,7 @@ require (
 	github.com/onsi/gomega v1.19.0 // indirect
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/thoas/go-funk v0.9.2
 	github.com/ugorji/go/codec v1.1.7 // indirect
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	golang.org/x/text v0.3.7 // indirect

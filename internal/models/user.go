@@ -3,11 +3,12 @@ package models
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/twpayne/go-geom/encoding/ewkbhex"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
-	"log"
-	"time"
 )
 
 type Location struct {

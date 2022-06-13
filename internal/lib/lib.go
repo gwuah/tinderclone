@@ -2,9 +2,10 @@ package lib
 
 import (
 	"crypto/rand"
-	"golang.org/x/crypto/bcrypt"
 	"strings"
 	"time"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 const otpChars = "1234567890"
