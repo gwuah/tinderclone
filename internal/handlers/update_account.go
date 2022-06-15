@@ -3,13 +3,11 @@ package handlers
 import (
 	"log"
 	"net/http"
-	"reflect"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/models"
 	"github.com/gwuah/tinderclone/internal/workers"
-	"github.com/thoas/go-funk"
 )
 
 type UpdateAccountRequest struct {
@@ -80,10 +78,11 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		})
 	}
 	if len(interests) > 0 {
-		if !reflect.DeepEqual(u.Interests, interests) {
-			toAdd, toRemove := funk.Difference(u.Interests, interests)
+		if !lib.Compare(u.Interests, interests) {
+			toUpdateToRedis := lib.Difference(u.Interests, interests)
+			toRemoveFromRedis := lib.Difference(interests, u.Interests)
 			err = h.q.QueueJob(workers.ADD_TO_INTEREST_BUCKETS, workers.AddToInterestBucketPayload{
-				Interests: toAdd,
+				Interests: toUpdateToRedis,
 				ID:        u.ID,
 			})
 			if err != nil {
@@ -92,7 +91,7 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 			}
 
 			if err = h.q.QueueJob(workers.REMOVE_FROM_INTEREST_BUCKETS, workers.RemoveFromInterestBucketPayload{
-				Interests: toRemove,
+				Interests: toRemoveFromRedis,
 				ID:        u.ID,
 			}); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to depopulate redis"})

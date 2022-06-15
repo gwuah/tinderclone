@@ -48,3 +48,35 @@ func StringToSlice(stringifiedSlice string) []string {
 	slice := strings.Split(stringifiedSlice, ",")
 	return slice
 }
+
+func Difference(a, b []string) []string {
+	mapOfStrings := make(map[string]string)
+	for _, val := range b {
+		mapOfStrings[val] = ""
+	}
+	var difference []string
+	for _, val := range a {
+		if _, found := mapOfStrings[val]; !found {
+			difference = append(difference, val)
+		}
+	}
+	return difference
+}
+
+func Compare(a, b []string) bool {
+	if len(a) != len(b){
+		return false
+	}
+	mapOfStrings := make(map[string]string)
+	for _, val := range b {
+		mapOfStrings[val] = ""
+	}
+	for _, val := range a {
+		if _, found := mapOfStrings[val] {
+			delete(mapOfStrings, val)
+		}
+	}
+	if len(mapOfStrings) == 0 {
+		return true
+	}
+}
