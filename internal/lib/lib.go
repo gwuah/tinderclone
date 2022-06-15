@@ -64,7 +64,7 @@ func Difference(a, b []string) []string {
 }
 
 func Compare(a, b []string) bool {
-	if len(a) != len(b){
+	if len(a) != len(b) {
 		return false
 	}
 	mapOfStrings := make(map[string]string)
@@ -72,11 +72,13 @@ func Compare(a, b []string) bool {
 		mapOfStrings[val] = ""
 	}
 	for _, val := range a {
-		if _, found := mapOfStrings[val] {
+		if _, found := mapOfStrings[val]; found {
 			delete(mapOfStrings, val)
 		}
 	}
 	if len(mapOfStrings) == 0 {
 		return true
 	}
+
+	return false
 }
