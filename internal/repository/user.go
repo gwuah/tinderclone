@@ -12,6 +12,10 @@ type UserRepo struct {
 	db *gorm.DB
 }
 
+type Interests struct {
+	Interests string
+}
+
 func NewUserRepo(db *gorm.DB) *UserRepo {
 	return &UserRepo{db: db}
 }
@@ -39,17 +43,15 @@ func (u *UserRepo) FindUserByID(id string) (*models.User, error) {
 }
 
 func (u *UserRepo) FindUserInterestsByID(id string) ([]string, error) {
-	type Interests struct {
-		Interests string
-	}
-	var userInt Interests
-	db := u.db.Where("id = ?", id).Find(&userInt)
+	var user models.User
+	var interests Interests
+	db := u.db.Select("interests").Where("id = ?", id).Find(&user).Scan(&interests)
 	if db.Error != nil {
 		return nil, db.Error
 	}
-	interests := lib.StringToSlice(userInt.Interests)
 
-	return interests, nil
+	sliceOfinterests := lib.StringToSlice(interests.Interests)
+	return sliceOfinterests, nil
 }
 
 func (u *UserRepo) UpdateUserByID(id string, user *models.User) error {

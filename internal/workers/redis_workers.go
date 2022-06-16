@@ -27,22 +27,20 @@ type RemoveFromInterestBucketPayload struct {
 	ID        string
 }
 
-func NewAddToInterestBuckerWorker(redisClient *redis.Client) *AddToInterestBucketWorker {
+func NewAddToInterestBucketWorker(redisClient *redis.Client) *AddToInterestBucketWorker {
 	return &AddToInterestBucketWorker{
 		RedisClient: redisClient,
 	}
 }
 
-func NewRemoveFromInterestBuckerWorker(redisClient *redis.Client) *RemoveFromInterestBucketWorker {
+func NewRemoveFromInterestBucketWorker(redisClient *redis.Client) *RemoveFromInterestBucketWorker {
 	return &RemoveFromInterestBucketWorker{
 		RedisClient: redisClient,
 	}
 }
 
 func (r *AddToInterestBucketWorker) AddUserToEachInterestBucket(interests []string, id string) error {
-	var RedisClient *redis.Client
-	pipe := RedisClient.TxPipeline()
-
+	pipe := r.RedisClient.TxPipeline()
 	for _, interest := range interests {
 		if err := pipe.SAdd(interest, id).Err(); err != nil {
 			return err
@@ -55,10 +53,8 @@ func (r *AddToInterestBucketWorker) AddUserToEachInterestBucket(interests []stri
 	return nil
 }
 
-// change
 func (r *RemoveFromInterestBucketWorker) RemoveUserFromEachInterestBucket(interests []string, id string) error {
-	var RedisClient *redis.Client
-	pipe := RedisClient.TxPipeline()
+	pipe := r.RedisClient.TxPipeline()
 
 	for _, interest := range interests {
 		if err := pipe.SRem(interest, id).Err(); err != nil {

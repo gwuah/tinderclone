@@ -76,7 +76,9 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "failed to find existing interests",
 		})
+		return
 	}
+
 	if len(existingInterests) > 0 {
 		if !lib.EqualInterests(u.Interests, existingInterests) {
 			toUpdateToRedis := lib.FindDifferenceBetweenInterests(u.Interests, existingInterests)
@@ -98,7 +100,6 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 				return
 			}
 		} else {
-			// no change happened. skip or call redis sadd again.
 			err = h.q.QueueJob(workers.ADD_TO_INTEREST_BUCKETS, workers.AddToInterestBucketPayload{
 				Interests: u.Interests,
 				ID:        u.ID,
@@ -124,3 +125,4 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		"data":    user,
 	})
 }
+

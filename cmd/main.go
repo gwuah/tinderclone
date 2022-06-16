@@ -49,7 +49,8 @@ func main() {
 
 	w := q.RegisterJobs([]queue.JobWorker{
 		workers.NewSMSWorker(sms),
-		workers.NewAddToInterestBuckerWorker(redisClient),
+		workers.NewAddToInterestBucketWorker(redisClient),
+		workers.NewRemoveFromInterestBucketWorker(redisClient),
 	})
 	go w.Start()
 
