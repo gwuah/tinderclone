@@ -40,19 +40,34 @@ func NewRemoveFromInterestBuckerWorker(redisClient *redis.Client) *RemoveFromInt
 }
 
 func (r *AddToInterestBucketWorker) AddUserToEachInterestBucket(interests []string, id string) error {
+	var RedisClient *redis.Client
+	pipe := RedisClient.TxPipeline()
+
 	for _, interest := range interests {
-		if err := r.RedisClient.SAdd(interest, id).Err(); err != nil {
+		if err := pipe.SAdd(interest, id).Err(); err != nil {
 			return err
 		}
+	}
+	_, err := pipe.Exec()
+	if err != nil {
+		return fmt.Errorf("failed to complete Add transaction. err= %s", err)
 	}
 	return nil
 }
 
+// change
 func (r *RemoveFromInterestBucketWorker) RemoveUserFromEachInterestBucket(interests []string, id string) error {
+	var RedisClient *redis.Client
+	pipe := RedisClient.TxPipeline()
+
 	for _, interest := range interests {
-		if err := r.RedisClient.SRem(interest, id).Err(); err != nil {
+		if err := pipe.SRem(interest, id).Err(); err != nil {
 			return err
 		}
+	}
+	_, err := pipe.Exec()
+	if err != nil {
+		return fmt.Errorf("failed to complete Remove transaction. err= %s", err)
 	}
 	return nil
 }
@@ -89,7 +104,7 @@ func (r *RemoveFromInterestBucketWorker) Worker() que.WorkFunc {
 
 		err := r.RemoveUserFromEachInterestBucket(req.Interests, req.ID)
 		if err != nil {
-			return fmt.Errorf("failed to populate redis bucket, error: \n %w", err)
+			return fmt.Errorf("failed to remove interest from redis bucket, error: \n %w", err)
 		}
 		return nil
 	}

@@ -70,17 +70,17 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		return
 	}
 
-	interests, err := h.repo.UserRepo.FindUserInterests(user.ID)
+	existingInterests, err := h.repo.UserRepo.FindUserInterestsByID(user.ID)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "failed to find interests",
+			"message": "failed to find existing interests",
 		})
 	}
-	if len(interests) > 0 {
-		if !lib.Compare(u.Interests, interests) {
-			toUpdateToRedis := lib.Difference(u.Interests, interests)
-			toRemoveFromRedis := lib.Difference(interests, u.Interests)
+	if len(existingInterests) > 0 {
+		if !lib.EqualInterests(u.Interests, existingInterests) {
+			toUpdateToRedis := lib.FindDifferenceBetweenInterests(u.Interests, existingInterests)
+			toRemoveFromRedis := lib.FindDifferenceBetweenInterests(existingInterests, u.Interests)
 			err = h.q.QueueJob(workers.ADD_TO_INTEREST_BUCKETS, workers.AddToInterestBucketPayload{
 				Interests: toUpdateToRedis,
 				ID:        u.ID,

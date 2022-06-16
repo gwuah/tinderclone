@@ -38,7 +38,7 @@ func (u *UserRepo) FindUserByID(id string) (*models.User, error) {
 	return &user, db.Error
 }
 
-func (u *UserRepo) FindUserInterests(id string) ([]string, error) {
+func (u *UserRepo) FindUserInterestsByID(id string) ([]string, error) {
 	type Interests struct {
 		Interests string
 	}
