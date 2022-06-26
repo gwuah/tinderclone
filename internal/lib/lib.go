@@ -50,9 +50,9 @@ func StringToSlice(stringifiedSlice string) []string {
 }
 
 func FindDifferenceBetweenInterests(a, b []string) []string {
-	mapOfStrings := make(map[string]string)
+	mapOfStrings := make(map[string]bool)
 	for _, val := range b {
-		mapOfStrings[val] = ""
+		mapOfStrings[val] = true
 	}
 	var difference []string
 	for _, val := range a {
@@ -64,17 +64,5 @@ func FindDifferenceBetweenInterests(a, b []string) []string {
 }
 
 func EqualInterests(a, b []string) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	mapOfStrings := make(map[string]string)
-	for _, val := range b {
-		mapOfStrings[val] = ""
-	}
-	for _, val := range a {
-		if _, found := mapOfStrings[val]; found {
-			delete(mapOfStrings, val)
-		}
-	}
-	return len(mapOfStrings) == 0
+	return len(FindDifferenceBetweenInterests(a, b)) == 0
 }

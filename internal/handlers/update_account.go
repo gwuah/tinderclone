@@ -70,7 +70,7 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		return
 	}
 
-	existingInterests, err := h.repo.UserRepo.FindUserInterestsByID(user.ID)
+	existingUser, err := h.repo.UserRepo.FindUserByID(user.ID)
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
@@ -78,6 +78,8 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		})
 		return
 	}
+
+	existingInterests := lib.StringToSlice(existingUser.Interests)
 
 	if len(existingInterests) > 0 {
 		if !lib.EqualInterests(u.Interests, existingInterests) {
@@ -125,4 +127,3 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		"data":    user,
 	})
 }
-
