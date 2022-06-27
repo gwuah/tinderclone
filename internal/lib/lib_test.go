@@ -1,6 +1,7 @@
 package lib
 
 import (
+	"log"
 	"os"
 	"testing"
 
@@ -22,13 +23,19 @@ func TestSendSMS(t *testing.T) {
 }
 
 func TestStringToSlice(t *testing.T) {
-	var outputSlice []string
-	testString := []string{"", "a,b,c", "kwaku,richie,griff,dibri"}
-	for _, v := range testString {
-		testSlice := StringToSlice(v)
-		outputSlice = append(outputSlice, testSlice...)
+	tests := []struct {
+		input    string
+		expected []string
+	}{
+		{input: "", expected: []string{""}},
+		{input: "a,b,c", expected: []string{"a", "b", "c"}},
+		{input: "kwaku,richie,griff,dibri", expected: []string{"kwaku", "richie", "griff", "dibri"}},
 	}
 
-	expectedOutput := []string{"", "a", "b", "c", "kwaku", "richie", "griff", "dibri"}
-	assert.Equal(t, expectedOutput, outputSlice)
+	for _, testCase := range tests {
+		got := StringToSlice(testCase.input)
+		log.Println(got)
+		assert.Equal(t, testCase.expected, got)
+	}
+
 }
