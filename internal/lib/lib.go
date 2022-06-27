@@ -45,7 +45,8 @@ func SliceToString(slice []string) string {
 }
 
 func StringToSlice(stringifiedSlice string) []string {
-	slice := strings.Split(stringifiedSlice, ",")
+	temp := SanitizeString(stringifiedSlice)
+	slice := strings.Split(temp, ",")
 	return slice
 }
 
@@ -65,4 +66,20 @@ func FindDifferenceBetweenInterests(a, b []string) []string {
 
 func EqualInterests(a, b []string) bool {
 	return len(FindDifferenceBetweenInterests(a, b)) == 0
+}
+
+func SanitizeString(a string) (b string) {
+	char := ","
+
+	a = strings.TrimPrefix(a, char)
+	a = strings.TrimSuffix(a, char)
+
+	// if strings.HasPrefix(a, char) {
+	// 	a = a[len(char):]
+	// }
+
+	// if strings.HasSuffix(a, char) {
+	// 	a = a[:len(a)-len(char)]
+	// }
+	return a
 }
