@@ -21,7 +21,9 @@ var routeHandlers *gin.Engine
 
 func TestMain(m *testing.M) {
 	err := config.LoadTestConfig("../../.env.test")
-	assert.NoError(&testing.T{}, err)
+	if err != nil {
+		panic(err)
+	}
 
 	db, err := postgres.Init()
 	if err != nil {
@@ -29,10 +31,13 @@ func TestMain(m *testing.M) {
 	}
 
 	sms, err := lib.NewTermii(os.Getenv("SMS_API_KEY"))
-	assert.NoError(&testing.T{}, err)
+	if err != nil {
+		panic(err)
+	}
+
 	q, err := queue.New()
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
 
 	repo := repository.New(db)
@@ -53,5 +58,4 @@ func TestCreateAccountEndpoint(t *testing.T) {
 	responseBody := handlers.DecodeResponse(t, response)
 
 	assert.Equal(t, "user successfully created", responseBody["message"])
-
 }

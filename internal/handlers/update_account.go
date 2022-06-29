@@ -79,47 +79,15 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		return
 	}
 
-	existingInterests := lib.StringToSlice(existingUser.Interests)
+	err = h.q.QueueJob(workers.UPDATE_USER, workers.UpdateUserWorkerPayload{
+		PreviousInterests: lib.StringToSlice(existingUser.Interests),
+		CurrentInterests:  u.Interests,
+		UserID:            existingUser.ID,
+	})
 
-	if len(existingInterests) > 0 {
-		if !lib.EqualInterests(u.Interests, existingInterests) {
-			toUpdateToRedis := lib.FindDifferenceBetweenInterests(u.Interests, existingInterests)
-			toRemoveFromRedis := lib.FindDifferenceBetweenInterests(existingInterests, u.Interests)
-			err = h.q.QueueJob(workers.ADD_TO_INTEREST_BUCKETS, workers.AddToInterestBucketPayload{
-				Interests: toUpdateToRedis,
-				ID:        u.ID,
-			})
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to populate redis"})
-				return
-			}
-
-			if err = h.q.QueueJob(workers.REMOVE_FROM_INTEREST_BUCKETS, workers.RemoveFromInterestBucketPayload{
-				Interests: toRemoveFromRedis,
-				ID:        u.ID,
-			}); err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to depopulate redis"})
-				return
-			}
-		} else {
-			err = h.q.QueueJob(workers.ADD_TO_INTEREST_BUCKETS, workers.AddToInterestBucketPayload{
-				Interests: u.Interests,
-				ID:        u.ID,
-			})
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to populate redis"})
-				return
-			}
-		}
-	} else {
-		err = h.q.QueueJob(workers.ADD_TO_INTEREST_BUCKETS, workers.AddToInterestBucketPayload{
-			Interests: u.Interests,
-			ID:        u.ID,
-		})
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to populate redis"})
-			return
-		}
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to queue job"})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{

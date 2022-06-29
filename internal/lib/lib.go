@@ -74,12 +74,57 @@ func SanitizeString(a string) (b string) {
 	a = strings.TrimPrefix(a, char)
 	a = strings.TrimSuffix(a, char)
 
-	// if strings.HasPrefix(a, char) {
-	// 	a = a[len(char):]
-	// }
-
-	// if strings.HasSuffix(a, char) {
-	// 	a = a[:len(a)-len(char)]
-	// }
 	return a
+}
+
+func getKeys(m map[string]bool) []string {
+	keys := make([]string, len(m))
+
+	i := 0
+	for k := range m {
+		keys[i] = k
+		i++
+	}
+
+	return keys
+}
+
+func Intersection(a, b []string) []string {
+	intersection := map[string]bool{}
+
+	a_map := map[string]bool{}
+	b_map := map[string]bool{}
+
+	for _, v := range a {
+		a_map[v] = true
+	}
+
+	for _, v := range b {
+		b_map[v] = true
+	}
+
+	if len(a_map) > len(b_map) {
+		a_map, b_map = b_map, a_map
+	}
+
+	for k := range a_map {
+		if b_map[k] {
+			intersection[k] = true
+		}
+	}
+
+	return getKeys(intersection)
+}
+
+func Complement(intersection, values []string) []string {
+	v_map := map[string]bool{}
+	for _, v := range values {
+		v_map[v] = true
+	}
+
+	for _, v := range intersection {
+		delete(v_map, v)
+	}
+
+	return getKeys(v_map)
 }
