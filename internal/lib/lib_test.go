@@ -86,7 +86,7 @@ func TestIntersection(t *testing.T) {
 	cases := []Case{
 		{
 			name:       "simple",
-			input:      [][]string{[]string{"yaw", "asare"}, []string{"asare"}},
+			input:      [][]string{{"yaw", "asare"}, {"asare"}},
 			difference: []string{"asare"},
 		},
 	}
