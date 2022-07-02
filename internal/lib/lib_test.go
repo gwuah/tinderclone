@@ -42,29 +42,34 @@ func TestStringToSlice(t *testing.T) {
 
 }
 
-func TestFindDifferenceBetweenInterests(t *testing.T) {
+func TestEqualInterests(t *testing.T) {
 	type Case struct {
 		name       string
 		input      [][]string
-		difference []string
+		difference bool
 	}
 
 	cases := []Case{
-		Case{
+		{
 			name:       "simple",
-			input:      [][]string{[]string{"yaw", "asare"}, []string{"asare"}},
-			difference: []string{"yaw"},
+			input:      [][]string{{"asare"}, {"asare"}},
+			difference: true,
 		},
-		Case{
-			name:       "simple2",
-			input:      [][]string{[]string{"asare"}, []string{"yaw", "asare"}},
-			difference: []string{"yaw"},
+		{
+			name:       "unhappy_simple",
+			input:      [][]string{{"asare", "shayo"}, {"asare"}},
+			difference: false,
+		},
+		{
+			name:       "unhappy_complex",
+			input:      [][]string{{"shayo"}, {"asare"}},
+			difference: false,
 		},
 	}
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			got := FindDifferenceBetweenInterests(tc.input[0], tc.input[1])
+			got := EqualInterests(tc.input[0], tc.input[1])
 			assert.Equal(t, tc.difference, got)
 		})
 	}
@@ -79,7 +84,7 @@ func TestIntersection(t *testing.T) {
 	}
 
 	cases := []Case{
-		Case{
+		{
 			name:       "simple",
 			input:      [][]string{[]string{"yaw", "asare"}, []string{"asare"}},
 			difference: []string{"asare"},
@@ -106,7 +111,7 @@ func TestComplement(t *testing.T) {
 	}
 
 	cases := []Case{
-		Case{
+		{
 			name: "complex",
 
 			previousInterests: []string{"hiking"},
