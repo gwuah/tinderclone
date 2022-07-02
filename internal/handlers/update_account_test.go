@@ -60,7 +60,7 @@ func TestUpdateUser400(t *testing.T) {
 	assert.Equal(t, "not authorized", responseBody["message"])
 }
 
-func TestUpdateUser200NoInterests(t *testing.T) {
+func TestUpdateUser200RedisCache(t *testing.T) {
 	code, _, user := handlers.CreateTestUser(t)
 	handlers.SeedDB(user)
 
@@ -79,7 +79,7 @@ func TestUpdateUser200NoInterests(t *testing.T) {
 			Longitude: 1.2468,
 			Latitude:  -1.2468,
 		},
-		Interests: nil,
+		Interests: []string{"edging", "camping", "basketball"},
 	}, "POST", &token)
 
 	getUserResponse := handlers.BootstrapServer(updateUserRequest, routeHandlers)

@@ -11,6 +11,7 @@ import (
 	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/postgres"
 	"github.com/gwuah/tinderclone/internal/queue"
+	redistest "github.com/gwuah/tinderclone/internal/redis"
 	"github.com/gwuah/tinderclone/internal/repository"
 	"github.com/gwuah/tinderclone/internal/server"
 	"github.com/jaswdr/faker"
@@ -30,6 +31,11 @@ func TestMain(m *testing.M) {
 		log.Fatal(err)
 	}
 
+	rdb, err := redistest.Init()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	sms, err := lib.NewTermii(os.Getenv("SMS_API_KEY"))
 	if err != nil {
 		panic(err)
@@ -41,7 +47,7 @@ func TestMain(m *testing.M) {
 	}
 
 	repo := repository.New(db)
-	handler := handlers.New(repo, sms, q)
+	handler := handlers.New(repo, sms, q, rdb)
 	srv := server.New(handler)
 	routeHandlers = srv.SetupRoutes()
 	os.Exit(m.Run())

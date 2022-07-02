@@ -7,6 +7,5 @@ const (
 	SEND_EMAIL                   queue.Job = "send_email"
 	ADD_TO_INTEREST_BUCKETS      queue.Job = "add_to_interest_buckets"
 	REMOVE_FROM_INTEREST_BUCKETS queue.Job = "remove_from_interest_buckets"
-
-	UPDATE_USER queue.Job = "update_user"
+	UPDATE_USER                  queue.Job = "update_user"
 )
