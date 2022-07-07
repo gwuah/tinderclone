@@ -35,12 +35,10 @@ func (r *UpdateUserWorker) Worker() que.WorkFunc {
 			return fmt.Errorf("unmarshal job failed. args= %s | err= %w", string(j.Args), err)
 		}
 
-		// if there's been no changes, return nil
 		if lib.EqualInterests(req.PreviousInterests, req.CurrentInterests) {
 			return nil
 		}
 
-		// if the user is now adding interests, call add_worker
 		if len(req.PreviousInterests) == 0 && len(req.CurrentInterests) > 0 {
 			return r.queue.QueueJob(ADD_TO_INTEREST_BUCKETS, AddToInterestBucketPayload{
 				Interests: req.CurrentInterests,
@@ -52,7 +50,6 @@ func (r *UpdateUserWorker) Worker() que.WorkFunc {
 		toRemove := lib.Complement(unchangedInterests, req.PreviousInterests)
 		toAdd := lib.Complement(unchangedInterests, req.CurrentInterests)
 
-		// add new interests
 		if len(toAdd) > 0 {
 			err := r.queue.QueueJob(ADD_TO_INTEREST_BUCKETS, AddToInterestBucketPayload{
 				Interests: toAdd,
@@ -63,7 +60,6 @@ func (r *UpdateUserWorker) Worker() que.WorkFunc {
 			}
 		}
 
-		// remove new interests
 		if len(toRemove) > 0 {
 			err := r.queue.QueueJob(REMOVE_FROM_INTEREST_BUCKETS, RemoveFromInterestBucketPayload{
 				Interests: toRemove,
