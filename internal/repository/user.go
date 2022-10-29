@@ -3,17 +3,12 @@ package repository
 import (
 	"fmt"
 
-	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/models"
 	"gorm.io/gorm"
 )
 
 type UserRepo struct {
 	db *gorm.DB
-}
-
-type Interests struct {
-	Interests string
 }
 
 func NewUserRepo(db *gorm.DB) *UserRepo {
@@ -40,18 +35,6 @@ func (u *UserRepo) FindUserByID(id string) (*models.User, error) {
 		return nil, db.Error
 	}
 	return &user, db.Error
-}
-
-func (u *UserRepo) FindUserInterestsByID(id string) ([]string, error) {
-	var user models.User
-	var interests Interests
-	db := u.db.Select("interests").Where("id = ?", id).Find(&user).Scan(&interests)
-	if db.Error != nil {
-		return nil, db.Error
-	}
-
-	sliceOfinterests := lib.StringToSlice(interests.Interests)
-	return sliceOfinterests, nil
 }
 
 func (u *UserRepo) UpdateUserByID(id string, user *models.User) error {

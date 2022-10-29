@@ -45,14 +45,15 @@ func SliceToString(slice []string) string {
 }
 
 func StringToSlice(stringifiedSlice string) []string {
-	slice := strings.Split(stringifiedSlice, ",")
+	temp := SanitizeString(stringifiedSlice)
+	slice := strings.Split(temp, ",")
 	return slice
 }
 
 func FindDifferenceBetweenInterests(a, b []string) []string {
-	mapOfStrings := make(map[string]string)
+	mapOfStrings := make(map[string]bool)
 	for _, val := range b {
-		mapOfStrings[val] = ""
+		mapOfStrings[val] = true
 	}
 	var difference []string
 	for _, val := range a {
@@ -64,17 +65,66 @@ func FindDifferenceBetweenInterests(a, b []string) []string {
 }
 
 func EqualInterests(a, b []string) bool {
-	if len(a) != len(b) {
-		return false
+	return len(FindDifferenceBetweenInterests(a, b)) == 0
+}
+
+func SanitizeString(a string) (b string) {
+	char := ","
+
+	a = strings.TrimPrefix(a, char)
+	a = strings.TrimSuffix(a, char)
+
+	return a
+}
+
+func getKeys(m map[string]bool) []string {
+	keys := make([]string, len(m))
+
+	i := 0
+	for k := range m {
+		keys[i] = k
+		i++
 	}
-	mapOfStrings := make(map[string]string)
-	for _, val := range b {
-		mapOfStrings[val] = ""
+
+	return keys
+}
+
+func Intersection(a, b []string) []string {
+	intersection := map[string]bool{}
+
+	a_map := map[string]bool{}
+	b_map := map[string]bool{}
+
+	for _, v := range a {
+		a_map[v] = true
 	}
-	for _, val := range a {
-		if _, found := mapOfStrings[val]; found {
-			delete(mapOfStrings, val)
+
+	for _, v := range b {
+		b_map[v] = true
+	}
+
+	if len(a_map) > len(b_map) {
+		a_map, b_map = b_map, a_map
+	}
+
+	for k := range a_map {
+		if b_map[k] {
+			intersection[k] = true
 		}
 	}
-	return len(mapOfStrings) == 0
+
+	return getKeys(intersection)
+}
+
+func Complement(intersection, values []string) []string {
+	v_map := map[string]bool{}
+	for _, v := range values {
+		v_map[v] = true
+	}
+
+	for _, v := range intersection {
+		delete(v_map, v)
+	}
+
+	return getKeys(v_map)
 }
