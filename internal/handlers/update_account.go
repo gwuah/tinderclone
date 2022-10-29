@@ -125,4 +125,3 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		"data":    user,
 	})
 }
-
