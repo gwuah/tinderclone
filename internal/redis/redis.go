@@ -12,6 +12,7 @@ func Init() (*redis.Client, error) {
 	if host == "" {
 		host = "127.0.0.1:6379"
 	}
+
 	pass := os.Getenv("REDIS_PASSWORD")
 	if pass == "" {
 		pass = ""
@@ -23,11 +24,5 @@ func Init() (*redis.Client, error) {
 		DB:       1,
 	})
 
-	err := rdb.Set("ping", "pong", 0).Err()
-	if err != nil {
-		return nil, err
-	}
-
 	return rdb, nil
-
 }

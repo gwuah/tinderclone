@@ -9,7 +9,7 @@ import (
 	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/postgres"
 	"github.com/gwuah/tinderclone/internal/queue"
-	redistest "github.com/gwuah/tinderclone/internal/redis"
+	redis "github.com/gwuah/tinderclone/internal/redis"
 	"github.com/gwuah/tinderclone/internal/repository"
 	"github.com/gwuah/tinderclone/internal/server"
 	"github.com/gwuah/tinderclone/internal/workers"
@@ -33,13 +33,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// redisClient := redis.NewClient(&redis.Options{
-	// 	Addr:     os.Getenv("REDIS_URL"),
-	// 	Password: os.Getenv("REDIS_PASSWORD"),
-	// 	DB:       0,
-	// })
-
-	rdb, err := redistest.Init()
+	rdb, err := redis.Init()
 	if err != nil {
 		log.Fatal(err)
 	}
