@@ -11,7 +11,6 @@ import (
 	"github.com/gwuah/tinderclone/internal/lib"
 	"github.com/gwuah/tinderclone/internal/postgres"
 	"github.com/gwuah/tinderclone/internal/queue"
-	redistest "github.com/gwuah/tinderclone/internal/redis"
 	"github.com/gwuah/tinderclone/internal/repository"
 	"github.com/gwuah/tinderclone/internal/server"
 	"github.com/jaswdr/faker"
@@ -31,7 +30,7 @@ func TestMain(m *testing.M) {
 		log.Fatal(err)
 	}
 
-	rdb, err := redistest.Init()
+	rdb, err := handlers.SetupTestRedisClient()
 	if err != nil {
 		log.Fatal(err)
 	}

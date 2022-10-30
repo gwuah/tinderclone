@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/gwuah/tinderclone/internal/config"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,6 +15,10 @@ func TestGenerateOTP(t *testing.T) {
 }
 
 func TestSendSMS(t *testing.T) {
+	err := config.LoadTestConfig("../../.env.test")
+	if err != nil {
+		assert.NoError(t, err)
+	}
 	sms, err := NewTermii(os.Getenv("SMS_API_KEY"))
 	assert.NoError(t, err)
 

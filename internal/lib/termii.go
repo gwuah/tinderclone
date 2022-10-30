@@ -3,7 +3,7 @@ package lib
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"strings"
 )
@@ -71,7 +71,7 @@ func (t *Termii) SendTextMessage(to string, sms string) (Response, error) {
 
 	defer res.Body.Close()
 
-	body, err := ioutil.ReadAll(res.Body)
+	body, err := io.ReadAll(res.Body)
 	if err != nil {
 		return Response{}, err
 	}
