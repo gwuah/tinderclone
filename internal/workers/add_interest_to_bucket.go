@@ -18,17 +18,22 @@ type AddToInterestBucketPayload struct {
 	ID        string
 }
 
-func NewAddToInterestBuckerWorker(redisClient *redis.Client) *AddToInterestBucketWorker {
+func NewAddToInterestBucketWorker(redisClient *redis.Client) *AddToInterestBucketWorker {
 	return &AddToInterestBucketWorker{
 		RedisClient: redisClient,
 	}
 }
 
 func (r *AddToInterestBucketWorker) AddUserToEachInterestBucket(interests []string, id string) error {
+	pipe := r.RedisClient.TxPipeline()
 	for _, interest := range interests {
-		if err := r.RedisClient.SAdd(interest, id).Err(); err != nil {
+		if err := pipe.SAdd(interest, id).Err(); err != nil {
 			return err
 		}
+	}
+	_, err := pipe.Exec()
+	if err != nil {
+		return fmt.Errorf("failed to complete Add transaction. err= %s", err)
 	}
 	return nil
 }
@@ -51,5 +56,3 @@ func (r *AddToInterestBucketWorker) Worker() que.WorkFunc {
 		return nil
 	}
 }
-
-

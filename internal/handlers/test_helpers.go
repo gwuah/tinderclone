@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"github.com/alicebob/miniredis/v2"
+	redis "github.com/go-redis/redis"
 	"log"
 	"net/http"
 	"net/http/httptest"
@@ -107,4 +109,25 @@ func DecodeResponse(t *testing.T, response *httptest.ResponseRecorder) map[strin
 	var responseBody map[string]interface{}
 	assert.NoError(t, json.Unmarshal(response.Body.Bytes(), &responseBody))
 	return responseBody
+}
+
+func MockRedisServer() (*miniredis.Miniredis, error) {
+	testRedisServer, err := miniredis.Run()
+
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+	return testRedisServer, nil
+}
+
+func SetupTestRedisClient() (*redis.Client, error) {
+	testRedisServer, err := MockRedisServer()
+	if err != nil {
+		return nil, err
+	}
+	testRedisClient := redis.NewClient(&redis.Options{
+		Addr: testRedisServer.Addr(),
+	})
+	return testRedisClient, nil
 }

@@ -70,13 +70,23 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		return
 	}
 
-	err = h.q.QueueJob(workers.ADD_TO_INTEREST_BUCKETS, workers.AddToInterestBucketPayload{
-		Interests: u.Interests,
-		ID:        u.ID,
+	existingUser, err := h.repo.UserRepo.FindUserByID(user.ID)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to find existing interests",
+		})
+		return
+	}
+
+	err = h.q.QueueJob(workers.UPDATE_USER, workers.UpdateUserWorkerPayload{
+		PreviousInterests: lib.StringToSlice(existingUser.Interests),
+		CurrentInterests:  u.Interests,
+		UserID:            existingUser.ID,
 	})
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to populate redis"})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "failed to queue job"})
 		return
 	}
 

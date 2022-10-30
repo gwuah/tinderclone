@@ -5,6 +5,7 @@ go 1.17
 // +heroku goVersion go1.17
 
 require (
+	github.com/alicebob/miniredis/v2 v2.23.0
 	github.com/bgentry/que-go v1.0.1
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-gonic/gin v1.7.7
@@ -19,6 +20,11 @@ require (
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519
 	gorm.io/driver/postgres v1.2.3
 	gorm.io/gorm v1.22.5
+)
+
+require (
+	github.com/alicebob/gopher-json v0.0.0-20200520072559-a9ecdc9d1d3a // indirect
+	github.com/yuin/gopher-lua v0.0.0-20220504180219-658193537a64 // indirect
 )
 
 require (
