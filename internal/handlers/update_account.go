@@ -61,20 +61,21 @@ func (h *Handler) UpdateAccount(c *gin.Context) {
 		ProfilePhoto: u.ProfilePhoto,
 	}
 
-	err := h.repo.UserRepo.UpdateUserByID(user.ID, &user)
-	if err != nil {
-		log.Println(err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "failed to update user",
-		})
-		return
-	}
-
 	existingUser, err := h.repo.UserRepo.FindUserByID(user.ID)
+
 	if err != nil {
 		log.Println(err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"message": "failed to find existing interests",
+		})
+		return
+	}
+
+	err = h.repo.UserRepo.UpdateUserByID(user.ID, &user)
+	if err != nil {
+		log.Println(err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "failed to update user",
 		})
 		return
 	}

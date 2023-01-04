@@ -3,6 +3,7 @@ package workers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/bgentry/que-go"
 	"github.com/go-redis/redis"
@@ -28,6 +29,10 @@ func NewUpdateUserWorker(redisClient *redis.Client, queue *queue.Que) *UpdateUse
 	}
 }
 
+func (r *UpdateUserWorker) Identifier() queue.Job {
+	return UPDATE_USER
+}
+
 func (r *UpdateUserWorker) Worker() que.WorkFunc {
 	return func(j *que.Job) error {
 		var req UpdateUserWorkerPayload
@@ -36,6 +41,8 @@ func (r *UpdateUserWorker) Worker() que.WorkFunc {
 		}
 
 		if lib.EqualInterests(req.PreviousInterests, req.CurrentInterests) {
+			fmt.Println(req.PreviousInterests)
+			fmt.Println(req.CurrentInterests)
 			return nil
 		}
 
@@ -51,6 +58,7 @@ func (r *UpdateUserWorker) Worker() que.WorkFunc {
 		toAdd := lib.Complement(unchangedInterests, req.CurrentInterests)
 
 		if len(toAdd) > 0 {
+			log.Println(toAdd)
 			err := r.queue.QueueJob(ADD_TO_INTEREST_BUCKETS, AddToInterestBucketPayload{
 				Interests: toAdd,
 				ID:        req.UserID,
@@ -61,6 +69,7 @@ func (r *UpdateUserWorker) Worker() que.WorkFunc {
 		}
 
 		if len(toRemove) > 0 {
+			log.Println(toRemove)
 			err := r.queue.QueueJob(REMOVE_FROM_INTEREST_BUCKETS, RemoveFromInterestBucketPayload{
 				Interests: toRemove,
 				ID:        req.UserID,

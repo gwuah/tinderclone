@@ -21,6 +21,7 @@ func ConstructDatabaseURI() string {
 	DBNAME := os.Getenv("DB_NAME")
 	PORT := os.Getenv("DB_PORT")
 	SSLMODE := os.Getenv("SSLMODE")
+
 	return fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=%s", USER, PASSWORD, HOST, PORT, DBNAME, SSLMODE)
 }
 
