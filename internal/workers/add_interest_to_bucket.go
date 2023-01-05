@@ -3,7 +3,6 @@ package workers
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 
 	"github.com/bgentry/que-go"
 	"github.com/go-redis/redis"
@@ -28,7 +27,6 @@ func NewAddToInterestBucketWorker(redisClient *redis.Client) *AddToInterestBucke
 func (r *AddToInterestBucketWorker) AddUserToEachInterestBucket(interests []string, id string) error {
 	pipe := r.RedisClient.TxPipeline()
 	for _, interest := range interests {
-		log.Println(interest)
 		if err := pipe.SAdd(interest, id).Err(); err != nil {
 			return err
 		}
