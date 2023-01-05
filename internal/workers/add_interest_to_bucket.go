@@ -3,7 +3,6 @@ package workers
 import (
 	"encoding/json"
 	"fmt"
-
 	"github.com/bgentry/que-go"
 	"github.com/go-redis/redis"
 	"github.com/gwuah/tinderclone/internal/queue"

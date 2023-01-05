@@ -50,6 +50,7 @@ func main() {
 		workers.NewSMSWorker(sms),
 		workers.NewAddToInterestBucketWorker(rdb),
 		workers.NewRemoveFromInterestBucketWorker(rdb),
+		workers.NewUpdateUserWorker(rdb, q),
 	})
 	go w.Start()
 

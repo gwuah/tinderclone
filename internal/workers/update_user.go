@@ -21,6 +21,10 @@ type UpdateUserWorkerPayload struct {
 	CurrentInterests  []string
 }
 
+func (r *UpdateUserWorker) Identifier() queue.Job {
+	return UPDATE_USER
+}
+
 func NewUpdateUserWorker(redisClient *redis.Client, queue *queue.Que) *UpdateUserWorker {
 	return &UpdateUserWorker{
 		RedisClient: redisClient,
